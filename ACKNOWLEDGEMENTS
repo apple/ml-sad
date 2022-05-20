@@ -1,0 +1,22 @@
+Acknowledgements
+Portions of this SAD Software may utilize the following copyrighted material,
+the use of which is hereby acknowledged.
+
+_____________________
+
+MSFT recommenders library
+    MIT License, Copyright (c) Microsoft Corporation. 
+    https://github.com/microsoft/recommenders
+
+Cornac, a comparative framework for multimodal recommender systems
+    Apache License, Version 2.0, January 2004.
+    https://github.com/PreferredAI/cornac
+
+RankFM, a Python implementation of Factorization Machines model
+    GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007.
+    https://github.com/etlundquist/rankfm
+
+Surprise, a Python scikit for building and analyzing recommender systems
+    BSD 3-Clause "New" or "Revised" License. Copyright (c) 2016, Nicolas Hug 
+    All rights reserved. https://github.com/NicolasHug/Surprise
+

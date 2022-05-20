@@ -1,0 +1,38 @@
+parameters:
+
+  filename: "samples/netflix/random_u10000_iall_loo00.tar.gz"
+
+  model:
+    name: "SADModel"
+    spec:
+      n: 10000
+      m: 8693
+      k: 500
+
+  trainer:
+    name: "SGDTrainer"
+    spec:
+      n_epochs: 20
+      u_idxs: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      i_idxs: 100
+      w_l1: 0.0
+      w_l2: 0.1
+
+      callbacks:
+        - name: "MetricsLoggingCallback"
+          spec:
+        - name: "WeightL1SchedulerCallback"
+          spec:
+            scheme: "step"
+            new_w_l1: 0.01
+            start: 0.5
+
+  generator:
+    name: ImplicitFeedbackGenerator
+    spec:
+      u_batch: 30
+      i_batch: 20
+      tensor_flag: False
+
+  input_dir: ./
+  output_dir: ./
