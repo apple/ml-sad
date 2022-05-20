@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.utils package &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>sad.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/sad.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sad-utils-package">
+<h1>sad.utils package<a class="headerlink" href="#sad-utils-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-sad.utils.job">
+<span id="sad-utils-job-module"></span><h2>sad.utils.job module<a class="headerlink" href="#module-sad.utils.job" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.utils.job.id_generator">
+<span class="sig-name descname"><span class="pre">id_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/utils/job.html#id_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.job.id_generator" title="Permalink to this definition"></a></dt>
+<dd><p>Randomly generate an id string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The length of the id, in characters.</p></li>
+<li><p><strong>chars</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The set of characters that the random id string will be
+choosing from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A randomly generated string.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.utils.job.read_from_yaml">
+<span class="sig-name descname"><span class="pre">read_from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/sad/utils/job.html#read_from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.job.read_from_yaml" title="Permalink to this definition"></a></dt>
+<dd><p>Read a local yml configuration file, and extract its <code class="docutils literal notranslate"><span class="pre">parameters</span></code> field and
+return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config_file</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – A local yml file. The <code class="docutils literal notranslate"><span class="pre">parameters</span></code> field in the yml
+file contains configurations.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing configurations to initialize a task.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>IOError</strong> – When provided <code class="docutils literal notranslate"><span class="pre">filename</span></code> argument does not point to a valid yml file.</p></li>
+<li><p><strong>AssertionError</strong> – When <code class="docutils literal notranslate"><span class="pre">parameters</span></code> is not contained in the yml file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-sad.utils.logging">
+<span id="sad-utils-logging-module"></span><h2>sad.utils.logging module<a class="headerlink" href="#module-sad.utils.logging" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.utils.logging.LoggingFormatter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LoggingFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datefmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/utils/logging.html#LoggingFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.logging.LoggingFormatter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Formatter</span></code></p>
+<p>A class that inherits from <code class="docutils literal notranslate"><span class="pre">logging.Formatter</span></code>. Instance method <code class="docutils literal notranslate"><span class="pre">formatTime</span></code>
+will be overwritten to produce the right format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.utils.logging.LoggingFormatter.formatTime">
+<span class="sig-name descname"><span class="pre">formatTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">logging.LogRecord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datefmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/sad/utils/logging.html#LoggingFormatter.formatTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.logging.LoggingFormatter.formatTime" title="Permalink to this definition"></a></dt>
+<dd><p>Return the creation time of the specified LogRecord as formatted text.</p>
+<p>This method should be called from format() by a formatter which
+wants to make use of a formatted time. This method can be overridden
+in formatters to provide for any specific requirement, but the
+basic behaviour is as follows: if datefmt (a string) is specified,
+it is used with time.strftime() to format the creation time of the
+record. Otherwise, an ISO8601-like (or RFC 3339-like) format is used.
+The resulting string is returned. This function uses a user-configurable
+function to convert the creation time to a tuple. By default,
+time.localtime() is used; to change this for a particular formatter
+instance, set the ‘converter’ attribute to a function with the same
+signature as time.localtime() or time.gmtime(). To change it for all
+formatters, for example if you want all logging times to be shown in GMT,
+set the ‘converter’ attribute in the Formatter class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.utils.logging.setup_module_level_logger">
+<span class="sig-name descname"><span class="pre">setup_module_level_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/utils/logging.html#setup_module_level_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.logging.setup_module_level_logger" title="Permalink to this definition"></a></dt>
+<dd><p>Function to setup module level loggers. The format of loggers will be set
+using to <code class="docutils literal notranslate"><span class="pre">FORMATTER_STRING</span></code>, using class <code class="docutils literal notranslate"><span class="pre">LoggingFormatter</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_name_list</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">List[str]</span></code>) – A list of module names corresponding
+top-level namespace of loggers.</p></li>
+<li><p><strong>level</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The level of loggers, determining the threshold of logging
+severity.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-sad.utils.misc">
+<span id="sad-utils-misc-module"></span><h2>sad.utils.misc module<a class="headerlink" href="#module-sad.utils.misc" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.utils.misc.my_logit">
+<span class="sig-name descname"><span class="pre">my_logit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EPS</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/sad/utils/misc.html#my_logit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.misc.my_logit" title="Permalink to this definition"></a></dt>
+<dd><p>Take logit of a given value. Input value will be restricted to <code class="docutils literal notranslate"><span class="pre">[EPS,</span> <span class="pre">1-EPS]</span></code>
+interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – A value is between <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">1)</span></code>. Due to numerical
+consideration, the value will be truncated to <code class="docutils literal notranslate"><span class="pre">[EPS,</span> <span class="pre">1-EPS]</span></code> where <code class="docutils literal notranslate"><span class="pre">EPS</span></code>
+is a small number.</p></li>
+<li><p><strong>EPS</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – A small positive number that will be used to maintain
+numerical stability. Default to <code class="docutils literal notranslate"><span class="pre">1e-10</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The logit of input <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.utils.misc.update_dict_recursively">
+<span class="sig-name descname"><span class="pre">update_dict_recursively</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/utils/misc.html#update_dict_recursively"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.utils.misc.update_dict_recursively" title="Permalink to this definition"></a></dt>
+<dd><p>A helper function to absorb contents in <code class="docutils literal notranslate"><span class="pre">dict_b</span></code> into <code class="docutils literal notranslate"><span class="pre">dict_a</span></code>, recursively.
+<code class="docutils literal notranslate"><span class="pre">dict_a</span></code> will be modified in place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict_a</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – First dictionary that absorbs.</p></li>
+<li><p><strong>dict_b</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – Second dictionary in which all fields will be absorbed
+into <code class="docutils literal notranslate"><span class="pre">dict_a</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Modified input dictionary <code class="docutils literal notranslate"><span class="pre">dict_a</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-sad.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sad.utils" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

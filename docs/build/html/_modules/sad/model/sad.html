@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.model.sad &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>sad.model.sad</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.model.sad</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">ModelFactory</span>
+
+
+<div class="viewcode-block" id="SADModel"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel">[docs]</a><span class="nd">@ModelFactory</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span> <span class="nc">SADModel</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_params</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of users.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">m</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of items.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of latent dimensions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inner_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Whether right matrix will be non-negative.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">T_ceiling</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The largest value of T that is allowed.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">5</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="mi">10</span>
+
+<div class="viewcode-block" id="SADModel.initialize_params"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.initialize_params">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize user matrix ``self.XI``, left item matrix ``self.H`` and right item</span>
+<span class="sd">        matrix ``self.T`` by drawing entries from a standard normal distribution. When</span>
+<span class="sd">        right item matrix is assumed to be non-negative (``self.inner_flag`` is ``True``),</span>
+<span class="sd">        ``self.T`` will be storing the logrithm of true tau matrix.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+        <span class="c1"># When self.inner_flag is true, the actual T is the exponential of it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SADModel.calculate_preference_tensor"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.calculate_preference_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_preference_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate preference tensor ``self.X`` using user and item matrices.&quot;&quot;&quot;</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">X1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ki,kj,kl-&gt;ijl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">XI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">X2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ki,kj,kl-&gt;ijl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">XI</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">-</span> <span class="n">X2</span></div>
+
+<div class="viewcode-block" id="SADModel.calculate_probability_tensor"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.calculate_probability_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_probability_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate probability tensor by applying logistic function to preference</span>
+<span class="sd">        tensor ``self.X``.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Pr</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SADModel.draw_observation_tensor"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.draw_observation_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">draw_observation_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Draw a complete observation tensor from the generative model of SAD.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`np.ndarray`: Three-way tensor with dimension ``n x m x m`` representing</span>
+<span class="sd">            personalized preferences between item pairs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Pr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="n">Obs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+                    <span class="n">Obs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">j1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">r</span>
+        <span class="k">return</span> <span class="n">Obs</span></div>
+
+<div class="viewcode-block" id="SADModel.get_xuij"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.get_xuij">[docs]</a>    <span class="k">def</span> <span class="nf">get_xuij</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">u_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">i_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">j_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">XI</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate preference score between two items for a particular user.</span>
+<span class="sd">        Parameter values in current model will be used to calculate the preference score</span>
+<span class="sd">        if no additional parameters are provided as arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            u_idx (:obj:`int`): User index, from ``0`` to ``self.n-1``.</span>
+<span class="sd">            i_idx (:obj:`int`): Item index, from ``0`` to ``self.m-1``.</span>
+<span class="sd">            j_idx (:obj:`int`): Item index, from ``0`` to ``self.m-1``.</span>
+<span class="sd">            XI (:obj:`np.ndarray`): An optional user matrix. When provided, user vector</span>
+<span class="sd">                will be taken from provided ``XI`` instead of ``self.XI``.</span>
+<span class="sd">            H (:obj:`np.ndarray`): An optional left item matrix. When provided, left</span>
+<span class="sd">                item vector will be taken from provided ``H`` instead of ``self.H``.</span>
+<span class="sd">            T (:obj:`np.ndarray`): An optional right item matrix. When provided, right</span>
+<span class="sd">                item vector will be taken from provided ``T`` instead of ``self.T``.</span>
+<span class="sd">                Subject to exponentiation when ``self.inner_flag`` is ``True``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`float`: Preference score between ``i_idx``-th item and ``j_idx``-th</span>
+<span class="sd">            item for ``u_idx``-th user.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">XI</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">XI</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">XI</span>
+        <span class="k">if</span> <span class="n">H</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span>
+        <span class="k">if</span> <span class="n">T</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="c1"># fmt: off</span>
+        <span class="n">tau_j</span> <span class="o">=</span> <span class="n">T</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">T</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">])</span>
+        <span class="n">tau_i</span> <span class="o">=</span> <span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">XI</span><span class="p">[:,</span> <span class="n">u_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">H</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">tau_j</span><span class="p">)</span> \
+                <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">XI</span><span class="p">[:,</span> <span class="n">u_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">H</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">tau_i</span><span class="p">)</span></div>
+        <span class="c1"># fmt: on</span>
+
+<div class="viewcode-block" id="SADModel.get_gradient_wrt_xuij"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.get_gradient_wrt_xuij">[docs]</a>    <span class="k">def</span> <span class="nf">get_gradient_wrt_xuij</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">u_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">obs_uij</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            u_idx (:obj:`int`): Index of user in user set. 0-based.</span>
+<span class="sd">            i_idx (:obj:`int`): Index of i-th item. It is the idx of left item in</span>
+<span class="sd">                preference tensor.</span>
+<span class="sd">            j_idx (:obj:`int`): Index of j-th item. It is the idx of right item in</span>
+<span class="sd">                preference tensor.</span>
+<span class="sd">            obs_uij (:obj:`int`): The observation at ``(u_idx, i_idx, j_idx)``. Take</span>
+<span class="sd">                ``1|-1|0`` three different values. ``&quot;1&quot;`` suggests ``i_idx``-th item is</span>
+<span class="sd">                more preferable than ``j_idx``-th item for ``u_idx``-th user. ``&quot;-1&quot;``</span>
+<span class="sd">                suggests the opposite. ``&quot;0&quot;`` means the preference information is not</span>
+<span class="sd">                available (missing data).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:obj:`float`): Return ``d(p)/d(x_uij)``, the gradient of log likehood with</span>
+<span class="sd">            respect to ``x_uij``, the ``(u_idx, i_idx, j_idx)`` element in preference</span>
+<span class="sd">            tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obs_uij</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># missing data</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="n">o</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">obs_uij</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">xuij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xuij</span><span class="p">(</span><span class="n">u_idx</span><span class="o">=</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="o">=</span><span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="o">=</span><span class="n">j_idx</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">o</span> <span class="o">-</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">expit</span><span class="p">(</span><span class="n">xuij</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">g</span></div>
+
+<div class="viewcode-block" id="SADModel.gradient_update"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.gradient_update">[docs]</a>    <span class="k">def</span> <span class="nf">gradient_update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">u_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">i_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">j_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">w_l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">w_l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            u_idx (:obj:`int`): Index of user in user set. 0-based.</span>
+<span class="sd">            i_idx (:obj:`int`): Index of i-th item. It is the idx of left item in</span>
+<span class="sd">                preference tensor.</span>
+<span class="sd">            j_idx (:obj:`int`): Index of j-th item. It is the idx of right item in</span>
+<span class="sd">                preference tensor.</span>
+<span class="sd">            g (:obj:`float`): The gradient of log likelihood wrt ``x_uij``.</span>
+<span class="sd">            w_l2 (:obj:`float`): The weight of l2 regularization.</span>
+<span class="sd">            w_l1 (:obj:`float`): The weight of l1 regularization.</span>
+<span class="sd">            lr (:obj:`float`): Learning rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">g</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># gradient is zero, exit</span>
+            <span class="k">return</span>
+
+        <span class="n">H_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">])</span>
+        <span class="n">H_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">])</span>
+
+        <span class="n">T_i</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]))</span>
+        <span class="p">)</span>
+        <span class="n">T_j</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">]))</span>
+        <span class="p">)</span>
+
+        <span class="n">XI_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">XI</span><span class="p">[:,</span> <span class="n">u_idx</span><span class="p">])</span>
+
+        <span class="n">gXI_u</span> <span class="o">=</span> <span class="n">H_i</span> <span class="o">*</span> <span class="n">T_j</span> <span class="o">-</span> <span class="n">H_j</span> <span class="o">*</span> <span class="n">T_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XI</span><span class="p">[:,</span> <span class="n">u_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">gXI_u</span> <span class="o">-</span> <span class="n">w_l2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">XI_u</span><span class="p">)</span>
+        <span class="c1">#### XI[:, u_idx] += lr * w * gXI_u</span>
+
+        <span class="n">gH_i</span> <span class="o">=</span> <span class="n">XI_u</span> <span class="o">*</span> <span class="n">T_j</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">gH_i</span> <span class="o">-</span> <span class="n">w_l2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">H_i</span><span class="p">)</span>
+        <span class="c1">#### H[:, i_idx] += lr * w * gH_i</span>
+
+        <span class="n">gH_j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">XI_u</span> <span class="o">*</span> <span class="n">T_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">gH_j</span> <span class="o">-</span> <span class="n">w_l2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">H_j</span><span class="p">)</span>
+        <span class="c1">#### H[:, j_idx] += lr * w * gH_j</span>
+
+        <span class="n">gT_i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">XI_u</span> <span class="o">*</span> <span class="n">H_j</span> <span class="o">*</span> <span class="n">T_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="n">gT_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">w_l2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">T_i</span>  <span class="c1"># add l2</span>
+        <span class="k">if</span> <span class="n">w_l1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">gT_i_reg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">gT_i_reg</span><span class="p">[</span><span class="n">T_i</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="n">T_i</span><span class="p">[</span><span class="n">T_i</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">gT_i_reg</span><span class="p">[</span><span class="n">T_i</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">T_i</span><span class="p">[</span><span class="n">T_i</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">w_l1</span> <span class="o">*</span> <span class="n">gT_i_reg</span>
+
+        <span class="n">gT_j</span> <span class="o">=</span> <span class="n">XI_u</span> <span class="o">*</span> <span class="n">H_i</span> <span class="o">*</span> <span class="n">T_j</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="n">gT_j</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">w_l2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">T_i</span>  <span class="c1"># add l2</span>
+        <span class="k">if</span> <span class="n">w_l1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">gT_j_reg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">gT_j_reg</span><span class="p">[</span><span class="n">T_j</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="n">T_j</span><span class="p">[</span><span class="n">T_j</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">gT_j_reg</span><span class="p">[</span><span class="n">T_j</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">T_j</span><span class="p">[</span><span class="n">T_j</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">w_l1</span> <span class="o">*</span> <span class="n">gT_j_reg</span></div>
+
+<div class="viewcode-block" id="SADModel.log_likelihood"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.log_likelihood">[docs]</a>    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">u_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">i_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">j_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">obs_uij</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">XI</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate log likelihood.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            u_idx (:obj:`int`): Index of user in user set. 0-based.</span>
+<span class="sd">            i_idx (:obj:`int`): Index of i-th item. It is the idx of left item in</span>
+<span class="sd">                preference tensor.</span>
+<span class="sd">            j_idx (:obj:`int`): Index of j-th item. It is the idx of right item in</span>
+<span class="sd">                preference tensor.</span>
+<span class="sd">            obs_uij (:obj:`int`): The observation at ``(u_idx, i_idx, j_idx)``. Take</span>
+<span class="sd">                ``1|-1|0`` three different values. ``&quot;1&quot;`` suggests ``i_idx``-th item is</span>
+<span class="sd">                more preferable than ``j_idx``-th item for ``u_idx``-th user. ``&quot;-1&quot;``</span>
+<span class="sd">                suggests the opposite. ``&quot;0&quot;`` means the preference information is not</span>
+<span class="sd">                available (missing data).</span>
+<span class="sd">            XI (:obj:`np.ndarray`): An optional user matrix. When provided, user vector</span>
+<span class="sd">                will be taken from provided ``XI`` instead of ``self.XI``.</span>
+<span class="sd">            H (:obj:`np.ndarray`): An optional left item matrix. When provided, left item</span>
+<span class="sd">                vector will be taken from provided ``H`` instead of ``self.H``.</span>
+<span class="sd">            T (:obj:`np.ndarray`): An optional right item matrix. When provided, right</span>
+<span class="sd">                item vector will be taken from provided ``T`` instead of ``self.T``.</span>
+<span class="sd">                Subject to exponentiation when ``self.inner_flag`` is set to ``True``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:obj:`float`): Return the contribution to the log likelihood from</span>
+<span class="sd">            observation at ``(u_idx, i_idx, j_idx)``. Return ``0`` when the observation</span>
+<span class="sd">            is missing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obs_uij</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># missing data</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="n">o</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">obs_uij</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">xuij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xuij</span><span class="p">(</span><span class="n">u_idx</span><span class="o">=</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="o">=</span><span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="o">=</span><span class="n">j_idx</span><span class="p">,</span> <span class="n">XI</span><span class="o">=</span><span class="n">XI</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">xuij</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">xuij</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">l</span></div>
+
+<div class="viewcode-block" id="SADModel.save"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;model-params.npz&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save model parameters to a file named ``&quot;model-params.npz&quot;`` under</span>
+<span class="sd">        ``os.path.join(working_dir, self.s3_key_path)``.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">working_dir</span><span class="p">:</span>
+            <span class="n">working_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="n">working_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_key_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span>
+            <span class="n">XI</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">XI</span><span class="p">,</span>
+            <span class="n">H</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;model_config.json&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SADModel.save_checkpoint"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save model checkpoints to a file under</span>
+<span class="sd">        ``os.path.join(working_dir, self.s3_key_path)``.&quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;model-params-</span><span class="si">{</span><span class="n">checkpoint_id</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">.npz&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">working_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SADModel.predict"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="SADModel.load"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load model parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            working_dir (:obj:`str`): The containing folder of ``self.s3_key_path``</span>
+<span class="sd">                where model parameters are stored.</span>
+<span class="sd">            filename (:obj:`str`): Filename containing model parameters. The full path</span>
+<span class="sd">                of the file will be</span>
+<span class="sd">                ``os.path.join(working_dir, self.s3_key_path, filename)``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">working_dir</span><span class="p">:</span>
+            <span class="n">working_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="n">working_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_key_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;model-params.npz&quot;</span>
+
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XI</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;XI&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SADModel.load_checkpoint"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load model checkpoints.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            working_dir (:obj:`str`): The containing folder of ``self.s3_key_path``</span>
+<span class="sd">                where model parameters are stored.</span>
+<span class="sd">            checkpoint_id (:obj:`int`): Model parameters will be loaded from file with</span>
+<span class="sd">                name ``&quot;model-params-{checkpoint_id:05d}.npz&quot;``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;model-params-</span><span class="si">{checkpoint_id:05d}</span><span class="s2">.npz&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">working_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SADModel.load_best"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.load_best">[docs]</a>    <span class="k">def</span> <span class="nf">load_best</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ll&quot;</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;best-based-on-</span><span class="si">{criterion}</span><span class="s2">.npz&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">working_dir</span><span class="o">=</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SADModel.reset_parameters"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_params</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SADModel.get_t_sparsity"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.get_t_sparsity">[docs]</a>    <span class="k">def</span> <span class="nf">get_t_sparsity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract the number of elements that are close to ``1`` in item right vectors</span>
+<span class="sd">        ``self.T`` and return proportion. When ``self.inner_flag`` is ``True``, it is</span>
+<span class="sd">        exponentiation of ``self.T`` will be used to calculate this number.&quot;&quot;&quot;</span>
+        <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-1</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_flag</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">n_close</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">n_close</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SADModel.parameters_for_monitor"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.sad.SADModel.parameters_for_monitor">[docs]</a>    <span class="k">def</span> <span class="nf">parameters_for_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Extract the number of elements that are close to ``1`` in item right vectors</span>
+<span class="sd">        ``self.T`` and return proportion. When ``self.inner_flag`` is ``True``, it is</span>
+<span class="sd">        exponentiation of ``self.T`` will be used to calculate this number.&quot;&quot;&quot;</span>
+        <span class="n">t_sparsity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_t_sparsity</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;t_sparisity&quot;</span><span class="p">:</span> <span class="n">t_sparsity</span><span class="p">}</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

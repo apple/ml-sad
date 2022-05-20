@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.model.fm &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>sad.model.fm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.model.fm</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">rankfm.rankfm</span> <span class="kn">import</span> <span class="n">RankFM</span>
+
+<span class="kn">from</span> <span class="nn">sad.utils.misc</span> <span class="kn">import</span> <span class="n">my_logit</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">ModelFactory</span>
+
+
+<div class="viewcode-block" id="FMModel"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel">[docs]</a><span class="nd">@ModelFactory</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span> <span class="nc">FMModel</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RankFM</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The Factorization Machine (FM) model instance object. We are using the</span>
+<span class="sd">        implementation of FM from ``RankFM`` package. This model will be initialized via</span>
+<span class="sd">        ``sad.trainer.FMTrainer`` when calling method ``self.initialize_fm_model()`` of</span>
+<span class="sd">        this class. This is because some paraemters that are required to initialize a</span>
+<span class="sd">        ``RankFM`` model are owned by trainer. Therefore those parameters need to be</span>
+<span class="sd">        passed from the trainer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fm_model</span>
+
+    <span class="nd">@fm_model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">fm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fm_model</span><span class="p">:</span> <span class="n">RankFM</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fm_model</span> <span class="o">=</span> <span class="n">fm_model</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of users.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">m</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of items.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">k</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of latent dimensions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FMModel.initialize_fm_model"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.initialize_fm_model">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_fm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="s2">&quot;FMTrainer&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a FM model object implemented in package ``RankFM``. Some training</span>
+<span class="sd">        parameters in a ``trainer`` object will be needed, therefore a</span>
+<span class="sd">        ``sad.trainer.FMTrainer`` object is supplied as an argument. The trainer</span>
+<span class="sd">        is supposed to call this method and supply itself as an argument. After calling,</span>
+<span class="sd">        ``self.fm_model`` property will contain the actual model object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trainer (:obj:`sad.trainer.FMTrainer`): A trainer that will call this</span>
+<span class="sd">                method to initialize a FM model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">RankFM</span><span class="p">(</span>
+            <span class="n">factors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+            <span class="n">loss</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">loss_name</span><span class="p">,</span>
+            <span class="n">max_samples</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">n_negative_samples</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">w_l2</span><span class="p">,</span>
+            <span class="n">beta</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">w_l2</span><span class="p">,</span>
+            <span class="n">learning_rate</span><span class="o">=</span><span class="n">trainer</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm_model</span> <span class="o">=</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="FMModel.get_xuij"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.get_xuij">[docs]</a>    <span class="k">def</span> <span class="nf">get_xuij</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">i_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">j_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate preference score between two items for a particular user. The</span>
+<span class="sd">        preference strength of an item for a user of this model class is the logit of</span>
+<span class="sd">        model&#39;s prediction probability. The difference between preference strengths of</span>
+<span class="sd">        the two items from the provided user is how the preference score is calculated.</span>
+<span class="sd">        For this class, user and item ids (not indices) are needed as arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            u_id (:obj:`str`): User ID.</span>
+<span class="sd">            i_id (:obj:`str`): Item ID.</span>
+<span class="sd">            j_id (:obj:`str`): Item ID.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`float`: Preference score between item ``i_id`` and ``j_id`` for</span>
+<span class="sd">            user ``u_id``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">u_id</span><span class="p">,</span> <span class="n">i_id</span><span class="p">],</span> <span class="p">[</span><span class="n">u_id</span><span class="p">,</span> <span class="n">j_id</span><span class="p">]])</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">my_logit</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">my_logit</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="FMModel.log_likelihood"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.log_likelihood">[docs]</a>    <span class="k">def</span> <span class="nf">log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">u_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">i_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">j_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">obs_uij</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate log likelihood.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            u_id (:obj:`str`): A user ID.</span>
+<span class="sd">            i_id (:obj:`str`): An item ID. The ID of left item in preference tensor.</span>
+<span class="sd">            j_id (:obj:`str`): An item ID. The ID of right item in preference tensor.</span>
+<span class="sd">            obs_uij (:obj:`int`): The observation of ``(u_id, i_id, j_id)`` from dataset.</span>
+<span class="sd">                Take ``1|-1|0`` three different values. ``&quot;1&quot;`` suggests item ``i_id`` is</span>
+<span class="sd">                more preferable than item ``j_id`` for user ``u_id``. ``&quot;-1&quot;``</span>
+<span class="sd">                suggests the opposite. ``&quot;0&quot;`` means the preference information is not</span>
+<span class="sd">                available (missing data).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (:obj:`float`): Return the contribution to the log likelihood from</span>
+<span class="sd">            observation of ``(u_id, i_id, j_id)``. Return ``0`` when the observation</span>
+<span class="sd">            is missing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obs_uij</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># missing data</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="n">o</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">obs_uij</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">xuij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xuij</span><span class="p">(</span><span class="n">u_id</span><span class="o">=</span><span class="n">u_id</span><span class="p">,</span> <span class="n">i_id</span><span class="o">=</span><span class="n">i_id</span><span class="p">,</span> <span class="n">j_id</span><span class="o">=</span><span class="n">j_id</span><span class="p">)</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">xuij</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">xuij</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">l</span></div>
+
+<div class="viewcode-block" id="FMModel.save"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save trained FM model to a folder (``self.s3_key_path``) rooted at</span>
+<span class="sd">        ``working_dir``. The trained FM model (``self.fm_model``) will be saved as a</span>
+<span class="sd">        pickle file named ``model.pickle`` under the folder.</span>
+
+<span class="sd">        Model configuration (``self.config``) will be saved too.</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            working_dir (:obj:`str`): The containing folder of ``self.s3_key_path``</span>
+<span class="sd">                where model and its configuration will be saved.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">working_dir</span><span class="p">:</span>
+            <span class="n">working_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="n">working_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_key_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fm_model</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;model.pickle&quot;</span><span class="p">),</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;model_config.json&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="FMModel.save_checkpoint"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Haven&#39;t implemented this functionality yet.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FMModel.predict"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FMModel.load"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load model from a folder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            working_dir (:obj:`str`): The containing folder of ``self.s3_key_path``</span>
+<span class="sd">                where model and configuration are stored.</span>
+<span class="sd">            filename (:obj:`str`): Filename containing model parameters. The full path</span>
+<span class="sd">                of the file will be</span>
+<span class="sd">                ``os.path.join(working_dir, self.s3_key_path, filename)``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">working_dir</span><span class="p">:</span>
+            <span class="n">working_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="n">working_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_key_path</span><span class="p">)</span>
+        <span class="n">pickle_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;model.pickle&quot;</span><span class="p">)</span>
+        <span class="n">model_obj</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">pickle_filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm_model</span> <span class="o">=</span> <span class="n">model_obj</span></div>
+
+<div class="viewcode-block" id="FMModel.load_checkpoint"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Havn&#39;t implemented this functionality yet.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FMModel.load_best"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.load_best">[docs]</a>    <span class="k">def</span> <span class="nf">load_best</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ll&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Havn&#39;t implemented this functionality yet.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FMModel.reset_parameters"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Doing nothing.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FMModel.parameters_for_monitor"><a class="viewcode-back" href="../../../api/sad.model.html#sad.model.fm.FMModel.parameters_for_monitor">[docs]</a>    <span class="k">def</span> <span class="nf">parameters_for_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return nothing.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

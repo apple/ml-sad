@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.callback.w_l1_scheduler &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>sad.callback.w_l1_scheduler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.callback.w_l1_scheduler</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">CallbackBase</span><span class="p">,</span> <span class="n">CallbackFactory</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;callback.w_l1_scheduler&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="exp_rise"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.exp_rise">[docs]</a><span class="k">def</span> <span class="nf">exp_rise</span><span class="p">(</span><span class="n">w_l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A scheduling function to calculate new weight of L1 regularization with</span>
+<span class="sd">    exponential rise.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        w_l1 (:obj:`float`): Current weight of L1 regularization.</span>
+<span class="sd">        rate (:obj:`float`): The rate of rise. When activated, ``w_l1`` will be</span>
+<span class="sd">            changed by multiplying ``exp(rate)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`float`: Updated weight of L1 regularization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_w_l1</span> <span class="o">=</span> <span class="n">w_l1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;w_l1 updated </span><span class="si">{</span><span class="n">w_l1</span><span class="si">:</span><span class="s2">.02e</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_w_l1</span><span class="si">:</span><span class="s2">.02e</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="s2">&quot;by exponenetial rise.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_w_l1</span></div>
+
+
+<div class="viewcode-block" id="step"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.step">[docs]</a><span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">w_l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">new_w_l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A scheduling function to update learning rate..</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        w_l1 (:obj:`float`): Current weight of L1 regularization.</span>
+<span class="sd">        new_w_l1 (:obj:`float`): New weight of L1 regularization.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`float`: Updated weight of L1 regularization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">w_l1</span> <span class="o">==</span> <span class="n">new_w_l1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">w_l1</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;w_l1 updated </span><span class="si">{</span><span class="n">w_l1</span><span class="si">:</span><span class="s2">.02e</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_w_l1</span><span class="si">:</span><span class="s2">.02e</span><span class="si">}</span><span class="s2"> by step scheme.&quot;</span><span class="p">)</span>
+    <span class="n">w_l1</span> <span class="o">=</span> <span class="n">new_w_l1</span>
+
+    <span class="k">return</span> <span class="n">w_l1</span></div>
+
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback">[docs]</a><span class="nd">@CallbackFactory</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span> <span class="nc">WeightL1SchedulerCallback</span><span class="p">(</span><span class="n">CallbackBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A callback class that is responsible to update weight of L1 regularization during</span>
+<span class="sd">    training.</span>
+
+<span class="sd">    Instance of this class will be managed by instances compliant with</span>
+<span class="sd">    ``sad.caller.CallerProtocol`` instances, during caller&#39;s&#39; initialization.</span>
+<span class="sd">    Configurations for this callback is provided under</span>
+<span class="sd">    ``trainer:spec:callbacks:``. An example is shown below::</span>
+
+<span class="sd">        trainer:</span>
+<span class="sd">          name: SGDTrainer</span>
+<span class="sd">          spec:</span>
+<span class="sd">            n_iters: 20</span>
+<span class="sd">            w_l1: 0.1</span>
+<span class="sd">            w_l2: 0.0</span>
+<span class="sd">            u_idxs: [0, 1, 2, 3]</span>
+<span class="sd">            callbacks:</span>
+<span class="sd">            - name: &quot;WeightL1SchedulerCallback&quot;</span>
+<span class="sd">              spec:</span>
+<span class="sd">                scheme: &quot;exp_rise&quot;</span>
+<span class="sd">                rate: -0.1</span>
+<span class="sd">                start: 0.5</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scheme</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The scheme of how weight of L1 regularization will be changed. Currently can</span>
+<span class="sd">        take ``&quot;exp_rise&quot;|&quot;step&quot;``. Will read directly from ``&quot;scheme&quot;`` field from</span>
+<span class="sd">        ``self.spec``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheme&quot;</span><span class="p">,</span> <span class="s2">&quot;exp_rise&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A positive number suggesting when to start to apply changes to weight of L1</span>
+<span class="sd">        regularization. When ``start &lt; 1``, it will be treated as a proportion,</span>
+<span class="sd">        suggesting ``w_l1`` will subject to change when</span>
+<span class="sd">        ``iter_idx &gt;= int(n_iters * start)``. Otherwise, ``iter_idx &gt;= int(start)`` will</span>
+<span class="sd">        be the condition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># assume it is a proportion</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">caller</span><span class="o">.</span><span class="n">n_iters</span> <span class="o">*</span> <span class="n">start</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">every</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Number of iterations every update is performed. ``1`` means weight of L1</span>
+<span class="sd">        regularization is subject to change for every iteration. Will read directly from</span>
+<span class="sd">        ``&quot;every&quot;`` field in ``self.spec``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">every</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;every&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">every</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The rate of rise. Effective when ``self.scheme`` is set to ``&quot;exp_rise&quot;``.</span>
+<span class="sd">        When activated,  weight of L1 regularization will be changed by multiplying its</span>
+<span class="sd">        value by ``exp(rate)``. Will read directly from ``&quot;rate&quot;`` field in</span>
+<span class="sd">        ``self.spec``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_w_l1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The new weight of L1 regularization. Effective when ``self.scheme`` is set to</span>
+<span class="sd">        ``&quot;step&quot;``. When activated, ``w_l1`` will be changed to ``self.new_w_l1``. Will</span>
+<span class="sd">        read directly from ``&quot;new_w_l1&quot;`` field under ``self.spec``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_w_l1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">caller</span><span class="o">.</span><span class="n">w_l1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.on_loop_begin"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_loop_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_loop_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Not applicable to this class.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.on_loop_end"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_loop_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loop_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Not applicable to this class.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.on_iter_begin"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_iter_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_iter_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called to determine whether to attempt to update the weight of L1</span>
+<span class="sd">        regulation when an iteration begins.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iter_idx (:obj:`int`): The index of iteration, 0-based.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
+        <span class="n">every</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">every</span>
+        <span class="n">caller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">caller</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iter_idx</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">iter_idx</span> <span class="o">%</span> <span class="n">every</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;exp_rise&quot;</span><span class="p">:</span>
+                <span class="n">new_w_l1</span> <span class="o">=</span> <span class="n">exp_rise</span><span class="p">(</span><span class="n">caller</span><span class="o">.</span><span class="n">w_l1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
+                <span class="n">new_w_l1</span> <span class="o">=</span> <span class="n">step</span><span class="p">(</span><span class="n">caller</span><span class="o">.</span><span class="n">w_l1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_w_l1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_w_l1</span> <span class="o">=</span> <span class="n">caller</span><span class="o">.</span><span class="n">w_l1</span>
+            <span class="n">caller</span><span class="o">.</span><span class="n">w_l1</span> <span class="o">=</span> <span class="n">new_w_l1</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.on_iter_end"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_iter_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_iter_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Not applicable to this class.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.on_step_begin"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_step_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Not applicable to this class.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.on_step_end"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_step_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To be determined.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.save"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="WeightL1SchedulerCallback.load"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

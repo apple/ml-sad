@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.generator.simulation &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>sad.generator.simulation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.generator.simulation</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
+
+<span class="kn">from</span> <span class="nn">sad.model</span> <span class="kn">import</span> <span class="n">SADModel</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">GeneratorBase</span><span class="p">,</span> <span class="n">GeneratorFactory</span>
+
+
+<div class="viewcode-block" id="SimulationGenerator"><a class="viewcode-back" href="../../../api/sad.generator.html#sad.generator.simulation.SimulationGenerator">[docs]</a><span class="nd">@GeneratorFactory</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span> <span class="nc">SimulationGenerator</span><span class="p">(</span><span class="n">GeneratorBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A concrete generator class that handles simulated data from the generative model</span>
+<span class="sd">    of ``SAD``. After an instance of this class is created, ``self.add(filepath)`` will</span>
+<span class="sd">    need to be called to add a local file to this generator. The format of the local</span>
+<span class="sd">    file is a compressed tarball, containing a ``raw.npz`` file, inside which true model</span>
+<span class="sd">    parameters ``XI0``, ``T0`` ``H0`` and ``X0`` (derived from the first three matrices)</span>
+<span class="sd">    are contained. An observation tensor ``Obs0`` is in the raw file as well, containing</span>
+<span class="sd">    a fully observed personalized pairwise comparision taking values of ``-1`` or ``1``.</span>
+
+<span class="sd">    One can set ``self.missing_ratio`` to control the percentage of missing data in the</span>
+<span class="sd">    observation. Details see below.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">SADModel</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">XI0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The true user matrix (``k x n``) containing user vectors as columns.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_XI0</span>
+
+    <span class="nd">@XI0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">XI0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">XI0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_XI0</span> <span class="o">=</span> <span class="n">XI0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">H0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The true left item matrix (``k x m``) containing item left vectors as columns.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_H0</span>
+
+    <span class="nd">@H0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">H0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">H0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_H0</span> <span class="o">=</span> <span class="n">H0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">T0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The true right item matrix (``k x m``) containing item right vectors as columns.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T0</span>
+
+    <span class="nd">@T0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">T0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_T0</span> <span class="o">=</span> <span class="n">T0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">X0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The three way tensor (``n x m x m``) containing true preference scores.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X0</span>
+
+    <span class="nd">@X0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">X0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X0</span> <span class="o">=</span> <span class="n">X0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">Obs0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Three way tensor containing observations. An alias to ``self.tensor``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">missing_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Proportion of missing entries in ``self.Obs0``. Default to ``0`` meaning no</span>
+<span class="sd">        observation is missing. Will read directly from ``&quot;missing_ratio&quot;`` field in</span>
+<span class="sd">        ``self.spec``. Missing entries in ``self.Obs0`` will be set to ``0`` when</span>
+<span class="sd">        ``self.prepare()`` is invoked.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;missing_ratio&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ll0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The log likelihood of non-missing observations under true parameter values.</span>
+<span class="sd">        Its value will be set after running ``self.prepare()``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ll0</span>
+
+    <span class="nd">@ll0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ll0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ll0</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ll0</span> <span class="o">=</span> <span class="n">ll0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rnd_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Random seed. Used for reproducibility purposes. Will read directly from</span>
+<span class="sd">        ``&quot;rnd_seed&quot;`` field from ``self.spec``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rnd_seed&quot;</span><span class="p">,</span> <span class="mi">10203</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_producer</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_gen_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_producer_random</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;iteration&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_producer_iteration</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_gen_producer_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;A protected helper function to produce samples in ``&quot;random&quot;`` mode.&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">u_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_batch</span>
+        <span class="n">i_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i_batch</span>
+        <span class="k">for</span> <span class="n">u_idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">u_batch</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">ii_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">i_batch</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">jj_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">i_batch</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ii_idxs</span><span class="p">,</span> <span class="n">jj_idxs</span><span class="p">):</span>
+                <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span>
+                <span class="k">yield</span> <span class="p">(</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">,</span> <span class="n">obs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_gen_producer_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;A protected helper function to produce samples in ``&quot;iteration&quot;`` mode.&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">u_shuffled</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">u_shuffled</span><span class="p">)</span>
+        <span class="n">i_shuffled</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">i_shuffled</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">uu_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">u_idx</span> <span class="o">=</span> <span class="n">u_shuffled</span><span class="p">[</span><span class="n">uu_idx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ii_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">i_idx</span> <span class="o">=</span> <span class="n">i_shuffled</span><span class="p">[</span><span class="n">ii_idx</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">jj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ii_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+                    <span class="n">j_idx</span> <span class="o">=</span> <span class="n">i_shuffled</span><span class="p">[</span><span class="n">jj_idx</span><span class="p">]</span>
+                    <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span>
+                    <span class="k">yield</span> <span class="p">(</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">,</span> <span class="n">obs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SimulationGenerator.prepare"><a class="viewcode-back" href="../../../api/sad.generator.html#sad.generator.simulation.SimulationGenerator.prepare">[docs]</a>    <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instance method that will be called to inform a generator that all raw data</span>
+<span class="sd">        have been added. For this class, the format of raw data is a compressed tarball,</span>
+<span class="sd">        containing a ``raw.npz`` file. Upon being called, following steps will be</span>
+<span class="sd">        performed. For this class only one raw data file is allowed to be added to</span>
+<span class="sd">        the generator.</span>
+
+<span class="sd">            1. Unzip raw data tarball. Read true parameter values from ``raw.npz`` file,</span>
+<span class="sd">               set corresponding attributes of current generator.</span>
+<span class="sd">            2. Create a ``self.user_idx_to_id`` and ``self.user_id_to_idx`` mapping. The</span>
+<span class="sd">               same will be created for items.</span>
+<span class="sd">            3. Randomly set certain proportion of observations to ``0``, suggesting data</span>
+<span class="sd">               are missing. In the meanwhile, calculate log likelihood of observed</span>
+<span class="sd">               entries under true parameter values.</span>
+<span class="sd">            4. Create ``self.user_idx_to_preference``, a mapping between user idx to</span>
+<span class="sd">               another dictionary, with keys being a tuple of two items</span>
+<span class="sd">               (in ``item_id``) and values being ``1``. The order of the two items in</span>
+<span class="sd">               keys indicate their preference.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="s2">&quot;raw.npz&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+
+        <span class="n">XI0</span><span class="p">,</span> <span class="n">H0</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">X0</span><span class="p">,</span> <span class="n">Obs0</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;XI0&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;H0&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;T0&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;X0&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Obs0&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">k</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">XI0</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">H0</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">assert</span> <span class="n">m</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">m</span>
+
+        <span class="n">user_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">item_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+
+        <span class="n">user_idx_to_id</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">user_set</span><span class="p">))</span>
+        <span class="n">item_idx_to_id</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="n">item_set</span><span class="p">))</span>
+
+        <span class="n">ll0</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rnd_seed</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">u_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+                    <span class="n">coin</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_ratio</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">coin</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_ratio</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">coin</span><span class="p">:</span>
+                        <span class="n">Obs0</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">Obs0</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">o</span> <span class="o">=</span> <span class="n">Obs0</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span>
+                        <span class="n">xuij</span> <span class="o">=</span> <span class="n">X0</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span>
+                        <span class="n">ll0</span> <span class="o">+=</span> <span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">xuij</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">xuij</span><span class="p">))</span>
+
+        <span class="c1"># create mapping between user idx to item preference pairs</span>
+        <span class="c1"># item preference pair is stored as a map as well, with key being a tuple of a item pair</span>
+        <span class="n">user_idx_to_preference</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">u_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">user_idx_to_preference</span><span class="p">[</span><span class="n">u_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="n">i_id</span> <span class="o">=</span> <span class="n">item_idx_to_id</span><span class="p">[</span><span class="n">i_idx</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">j_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+                    <span class="n">j_id</span> <span class="o">=</span> <span class="n">item_idx_to_id</span><span class="p">[</span><span class="n">j_idx</span><span class="p">]</span>
+                    <span class="n">obs</span> <span class="o">=</span> <span class="n">Obs0</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">obs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">user_idx_to_preference</span><span class="p">[</span><span class="n">u_idx</span><span class="p">][(</span><span class="n">i_id</span><span class="p">,</span> <span class="n">j_id</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">obs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">user_idx_to_preference</span><span class="p">[</span><span class="n">u_idx</span><span class="p">][(</span><span class="n">j_id</span><span class="p">,</span> <span class="n">i_id</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_idx_to_id</span> <span class="o">=</span> <span class="n">user_idx_to_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_idx_to_id</span> <span class="o">=</span> <span class="n">item_idx_to_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id_to_idx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">user_idx_to_id</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">user_idx_to_id</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_id_to_idx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">item_idx_to_id</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">item_idx_to_id</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">XI0</span> <span class="o">=</span> <span class="n">XI0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H0</span> <span class="o">=</span> <span class="n">H0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T0</span> <span class="o">=</span> <span class="n">T0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X0</span> <span class="o">=</span> <span class="n">X0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ll0</span> <span class="o">=</span> <span class="n">ll0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span> <span class="o">=</span> <span class="n">Obs0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_idx_to_preference</span> <span class="o">=</span> <span class="n">user_idx_to_preference</span></div>
+
+<div class="viewcode-block" id="SimulationGenerator.get_obs_uij"><a class="viewcode-back" href="../../../api/sad.generator.html#sad.generator.simulation.SimulationGenerator.get_obs_uij">[docs]</a>    <span class="k">def</span> <span class="nf">get_obs_uij</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the ``(u, i, j)``-th observation from observation tensor ``self.Obs0``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            u_idx (:obj:`int`): The user idx.</span>
+<span class="sd">            i_idx (:obj:`int`): Index of first item in comparison.</span>
+<span class="sd">            j_idx (:obj:`int`): Index of second item in comparison.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`int`: A value from ``(-1, 1, 0)`` indicating the personalized</span>
+<span class="sd">            preference of the two items. ``1`` indicates ``i_idx``-th item is preferable</span>
+<span class="sd">            than ``j_idx``-th; ``-1`` suggests otherwise; ``0`` indicate such information</span>
+<span class="sd">            is not available.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="n">u_idx</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SimulationGenerator.get_trn"><a class="viewcode-back" href="../../../api/sad.generator.html#sad.generator.simulation.SimulationGenerator.get_trn">[docs]</a>    <span class="k">def</span> <span class="nf">get_trn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SimulationGenerator.get_val_or_not"><a class="viewcode-back" href="../../../api/sad.generator.html#sad.generator.simulation.SimulationGenerator.get_val_or_not">[docs]</a>    <span class="k">def</span> <span class="nf">get_val_or_not</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

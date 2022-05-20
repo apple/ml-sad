@@ -1,0 +1,21 @@
+sad.task.training package
+=========================
+
+Submodules
+----------
+
+sad.task.training.training module
+---------------------------------
+
+.. automodule:: sad.task.training.training
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: sad.task.training
+   :members:
+   :undoc-members:
+   :show-inheritance:

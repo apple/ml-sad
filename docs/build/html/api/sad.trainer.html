@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.trainer package &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>sad.trainer package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/sad.trainer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sad-trainer-package">
+<h1>sad.trainer package<a class="headerlink" href="#sad-trainer-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-sad.trainer.base">
+<span id="sad-trainer-base-module"></span><h2>sad.trainer.base module<a class="headerlink" href="#module-sad.trainer.base" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TrainerBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sad.callback.html#sad.callback.caller.CallerProtocol" title="sad.callback.caller.CallerProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.callback.caller.CallerProtocol</span></code></a></p>
+<p>The abstract trainer base class. It is the class that all concrete trainer classes
+will inherit from.</p>
+<p>In the meanwhile, this class is complaint of <code class="docutils literal notranslate"><span class="pre">sad.callback.CallerProtocol</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.add_final_metrics_to_model_metrics">
+<span class="sig-name descname"><span class="pre">add_final_metrics_to_model_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerBase.add_final_metrics_to_model_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerBase.add_final_metrics_to_model_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Class specific method to add final metrics to model’s metrics attribute. After
+addition, model’s metrics will include <code class="docutils literal notranslate"><span class="pre">&quot;final&quot;</span></code> field with structure shown
+below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;ll&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="s2">&quot;t_sparsity&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.config" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration information that is used to initialize the instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.eval_at_every_step">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval_at_every_step</span></span><a class="headerlink" href="#sad.trainer.base.TrainerBase.eval_at_every_step" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A number to indicate how many
+steps log likelihood will be evaluated. A negative number means do not evaluate
+at step level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.generator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.generator.html#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.generator" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to a generator instance, which will be used by current trainer to
+perform a training task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.load">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerBase.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerBase.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.lr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lr</span></span><a class="headerlink" href="#sad.trainer.base.TrainerBase.lr" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. Learning rate. Subject to
+changes during training by callbacks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.model" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to a model instance. This model will be trained during training
+loop by current trainer.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.n_epochs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.n_epochs" title="Permalink to this definition"></a></dt>
+<dd><p>The number of epochs during training, specific to <code class="docutils literal notranslate"><span class="pre">TrainerBase</span></code>. Will read
+directly from <code class="docutils literal notranslate"><span class="pre">&quot;n_epochs&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.n_iters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_iters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.n_iters" title="Permalink to this definition"></a></dt>
+<dd><p>The number of iterations that will happen in a trainer. Set to be an alias
+to <code class="docutils literal notranslate"><span class="pre">self.n_epochs</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.on_loop_end">
+<span class="sig-name descname"><span class="pre">on_loop_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerBase.on_loop_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerBase.on_loop_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be invoked at the end of training loop. Save trainer instance to
+<code class="docutils literal notranslate"><span class="pre">self.working_dir</span></code>, and save <code class="docutils literal notranslate"><span class="pre">self.model</span></code>, <code class="docutils literal notranslate"><span class="pre">self.generator</span></code> in the
+meanwhile.</p>
+<p>This method overwrites <code class="docutils literal notranslate"><span class="pre">on_loop_end</span></code> in <code class="docutils literal notranslate"><span class="pre">sad.callback.CallerProtocol</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.save">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerBase.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerBase.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save an intance of trainer for later usage.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.spec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.spec" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to <code class="docutils literal notranslate"><span class="pre">&quot;spec&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.config</span></code>. When no such a field
+available or the value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, an empty dictionary will be set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.stop">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><a class="headerlink" href="#sad.trainer.base.TrainerBase.stop" title="Permalink to this definition"></a></dt>
+<dd><p>A flag to indicate whether to stop training. Subject to
+changes during training by callbacks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.task">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></em><a class="headerlink" href="#sad.trainer.base.TrainerBase.task" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to an instance of training task associated with current trainer.
+It is the task instance in which a trainer is initialized.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.train">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerBase.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerBase.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerBase.working_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">working_dir</span></span><a class="headerlink" href="#sad.trainer.base.TrainerBase.working_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.task.output_dir</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TrainerFactory</span></span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerFactory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A factory class that is responsible to create trainer instances.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerFactory.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">trainer.TrainerFactory</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#sad.trainer.base.TrainerFactory.logger" title="Permalink to this definition"></a></dt>
+<dd><p>Class attribute for logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerFactory.produce">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><span class="pre">sad.trainer.base.TrainerBase</span></a></span></span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerFactory.produce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerFactory.produce" title="Permalink to this definition"></a></dt>
+<dd><p>A class level method to initialize instances of <code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>
+classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">config</span></code>) – <p>Configuration used to initialize instance object. An
+example is given below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="s2">&quot;SGDTrainer&quot;</span>
+<span class="n">spec</span><span class="p">:</span>
+    <span class="n">w_l1</span><span class="p">:</span> <span class="mf">0.01</span>
+    <span class="n">w_l2</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code>) – An instance of model, a trainable that a
+trainer will train.</p></li>
+<li><p><strong>generator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.generator.GeneratorBase</span></code>) – An instance of generator,
+from which training and validation data are generated.</p></li>
+<li><p><strong>task</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.tasks.training.TrainingTask</span></code>) – An instance of training
+task, from which a trainer is created.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.base.TrainerFactory.register">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><span class="pre">sad.trainer.base.TrainerBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><span class="pre">sad.trainer.base.TrainerBase</span></a></span></span><a class="reference internal" href="../_modules/sad/trainer/base.html#TrainerFactory.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.base.TrainerFactory.register" title="Permalink to this definition"></a></dt>
+<dd><p>A class level decorator responsible to decorate <code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>
+classes and register them into <code class="docutils literal notranslate"><span class="pre">TrainerFactory.registry</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.cornac">
+<span id="sad-trainer-cornac-module"></span><h2>sad.trainer.cornac module<a class="headerlink" href="#module-sad.trainer.cornac" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.cornac.CornacTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CornacTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.cornac.CornacModel" title="sad.model.cornac.CornacModel"><span class="pre">sad.model.cornac.CornacModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/cornac.html#CornacTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.cornac.CornacTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.cornac.CornacTrainer.lambda_reg">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_reg</span></span><a class="headerlink" href="#sad.trainer.cornac.CornacTrainer.lambda_reg" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. The <code class="docutils literal notranslate"><span class="pre">lambda</span></code> regularization
+parameter that will be used during training. Specific to
+<code class="docutils literal notranslate"><span class="pre">sad.model.CoracModel</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.cornac.CornacTrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/cornac.html#CornacTrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.cornac.CornacTrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.cornac.CornacTrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/cornac.html#CornacTrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.cornac.CornacTrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.cornac.CornacTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/cornac.html#CornacTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.cornac.CornacTrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.fm">
+<span id="sad-trainer-fm-module"></span><h2>sad.trainer.fm module<a class="headerlink" href="#module-sad.trainer.fm" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FMTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.fm.FMModel" title="sad.model.fm.FMModel"><span class="pre">sad.model.fm.FMModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/fm.html#FMTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.fm.FMTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/fm.html#FMTrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.fm.FMTrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer.loss_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loss_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sad.trainer.fm.FMTrainer.loss_name" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;loss&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. Currently can take
+<code class="docutils literal notranslate"><span class="pre">&quot;bpr&quot;|&quot;warp&quot;</span></code> two values. Default is <code class="docutils literal notranslate"><span class="pre">&quot;bpr&quot;</span></code>. Specific to
+<code class="docutils literal notranslate"><span class="pre">sad.model.FMModel</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer.n_negative_samples">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_negative_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.trainer.fm.FMTrainer.n_negative_samples" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;n_negative_samples&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. It means
+the number of samples that will be drawn for <code class="docutils literal notranslate"><span class="pre">&quot;warp&quot;</span></code> loss.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/fm.html#FMTrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.fm.FMTrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/fm.html#FMTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.fm.FMTrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.fm.FMTrainer.w_l2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">w_l2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.trainer.fm.FMTrainer.w_l2" title="Permalink to this definition"></a></dt>
+<dd><p>Weight of L2 regularization to parameters. Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;w_l2&quot;</span></code> field
+in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.msft_ncf">
+<span id="sad-trainer-msft-ncf-module"></span><h2>sad.trainer.msft_ncf module<a class="headerlink" href="#module-sad.trainer.msft_ncf" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.msft_ncf.MSFTRecNCFTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MSFTRecNCFTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.msft_ncf.MSFTRecNCFModel" title="sad.model.msft_ncf.MSFTRecNCFModel"><span class="pre">sad.model.msft_ncf.MSFTRecNCFModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_ncf.html#MSFTRecNCFTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_ncf.MSFTRecNCFTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.msft_ncf.MSFTRecNCFTrainer.i_idxs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">i_idxs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.trainer.msft_ncf.MSFTRecNCFTrainer.i_idxs" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A list of items, represented by item
+indices. The pairwise comparison over those items from users in <code class="docutils literal notranslate"><span class="pre">self.u_idxs</span></code>
+will be used to evaluate the model during training. Configurable to a subset of
+items for efficiency consideration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_ncf.MSFTRecNCFTrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_ncf.html#MSFTRecNCFTrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_ncf.MSFTRecNCFTrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_ncf.MSFTRecNCFTrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_ncf.html#MSFTRecNCFTrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_ncf.MSFTRecNCFTrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_ncf.MSFTRecNCFTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_ncf.html#MSFTRecNCFTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_ncf.MSFTRecNCFTrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.msft_ncf.MSFTRecNCFTrainer.u_idxs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_idxs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.trainer.msft_ncf.MSFTRecNCFTrainer.u_idxs" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A list of users represented by user
+indices, on whom log likelihood will be evaluated. Configurable to a subset of
+users for efficiency consideration.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.msft_rbm">
+<span id="sad-trainer-msft-rbm-module"></span><h2>sad.trainer.msft_rbm module<a class="headerlink" href="#module-sad.trainer.msft_rbm" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.msft_rbm.MSFTRecRBMTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MSFTRecRBMTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.msft_rbm.MSFTRecRBMModel" title="sad.model.msft_rbm.MSFTRecRBMModel"><span class="pre">sad.model.msft_rbm.MSFTRecRBMModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_rbm.html#MSFTRecRBMTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_rbm.MSFTRecRBMTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_rbm.MSFTRecRBMTrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_rbm.html#MSFTRecRBMTrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_rbm.MSFTRecRBMTrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_rbm.MSFTRecRBMTrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_rbm.html#MSFTRecRBMTrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_rbm.MSFTRecRBMTrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_rbm.MSFTRecRBMTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_rbm.html#MSFTRecRBMTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_rbm.MSFTRecRBMTrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.msft_vae">
+<span id="sad-trainer-msft-vae-module"></span><h2>sad.trainer.msft_vae module<a class="headerlink" href="#module-sad.trainer.msft_vae" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MSFTRecVAETrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.msft_vae.MSFTRecVAEModel" title="sad.model.msft_vae.MSFTRecVAEModel"><span class="pre">sad.model.msft_vae.MSFTRecVAEModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_vae.html#MSFTRecVAETrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer.beta">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer.beta" title="Permalink to this definition"></a></dt>
+<dd><p>The beta parameter in beta-VAE model. Will read directly from <code class="docutils literal notranslate"><span class="pre">&quot;beta&quot;</span></code> field
+from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer.evaluation">
+<span class="sig-name descname"><span class="pre">evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_vae.html#MSFTRecVAETrainer.evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer.evaluation" title="Permalink to this definition"></a></dt>
+<dd><p>Actual method to run the evaluation. During evaluation, item relative scores
+will be calculate for each item pair with i is more preferrable than j. Score
+mean, std and log likelihood of the model will be calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scores</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Pre-calculated user-item preference.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer.evaluation_flag">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluation_flag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer.evaluation_flag" title="Permalink to this definition"></a></dt>
+<dd><p>An attribute that is specific to <code class="docutils literal notranslate"><span class="pre">MSFTRecVAETrainer</span></code>. When set to <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+enable to calculate relative preference scores for each item pair with
+<code class="docutils literal notranslate"><span class="pre">i</span></code>-th item being more preferrable than <code class="docutils literal notranslate"><span class="pre">j</span></code>-th item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_vae.html#MSFTRecVAETrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_vae.html#MSFTRecVAETrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.msft_vae.MSFTRecVAETrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/msft_vae.html#MSFTRecVAETrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.msft_vae.MSFTRecVAETrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.sad">
+<span id="sad-trainer-sad-module"></span><h2>sad.trainer.sad module<a class="headerlink" href="#module-sad.trainer.sad" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SGDTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.sad.SADModel" title="sad.model.sad.SADModel"><span class="pre">sad.model.sad.SADModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/sad.html#SGDTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.sad.SGDTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.i_idxs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">i_idxs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.i_idxs" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A list of items, represented by item
+indices. The pairwise comparison over those items from users in <code class="docutils literal notranslate"><span class="pre">self.u_idxs</span></code>
+will be used to evaluate the model during training. Configurable to a subset of
+items for efficiency consideration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/sad.html#SGDTrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/sad.html#SGDTrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/sad.html#SGDTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.u_idxs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_idxs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.u_idxs" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A list of users represented by user
+indices, on whom log likelihood will be evaluated. Configurable to a subset of
+users for efficiency consideration.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.w_l1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">w_l1</span></span><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.w_l1" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. The weight of <code class="docutils literal notranslate"><span class="pre">L1</span></code>
+penalty on parameter <code class="docutils literal notranslate"><span class="pre">T</span></code> in a SAD model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.sad.SGDTrainer.w_l2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">w_l2</span></span><a class="headerlink" href="#sad.trainer.sad.SGDTrainer.w_l2" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. The weight of <code class="docutils literal notranslate"><span class="pre">L2</span></code>
+penalty on parameters of <code class="docutils literal notranslate"><span class="pre">XI</span></code> and <code class="docutils literal notranslate"><span class="pre">H</span></code> in a SAD model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer.svd">
+<span id="sad-trainer-svd-module"></span><h2>sad.trainer.svd module<a class="headerlink" href="#module-sad.trainer.svd" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.trainer.svd.SVDTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SVDTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.svd.SVDModel" title="sad.model.svd.SVDModel"><span class="pre">sad.model.svd.SVDModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="sad.generator.implicit_fb.ImplicitFeedbackGenerator"><span class="pre">sad.generator.implicit_fb.ImplicitFeedbackGenerator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/svd.html#SVDTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.svd.SVDTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.trainer.base.TrainerBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.svd.SVDTrainer.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/svd.html#SVDTrainer.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.svd.SVDTrainer.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load states of an trainer intance; mostly for continue the training loop of
+a saved model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.trainer.svd.SVDTrainer.reg">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.trainer.svd.SVDTrainer.reg" title="Permalink to this definition"></a></dt>
+<dd><p>Regularization parameter. Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;reg&quot;</span></code> field
+in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.svd.SVDTrainer.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/svd.html#SVDTrainer.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.svd.SVDTrainer.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save trainer configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.trainer.svd.SVDTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/trainer/svd.html#SVDTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.trainer.svd.SVDTrainer.train" title="Permalink to this definition"></a></dt>
+<dd><p>The main training loop. Concrete trainer classes are responsible to provide
+implementations of their training logic.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.trainer">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sad.trainer" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

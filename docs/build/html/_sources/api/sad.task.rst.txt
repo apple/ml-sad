@@ -1,0 +1,37 @@
+sad.task package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   sad.task.training
+
+Submodules
+----------
+
+sad.task.base module
+--------------------
+
+.. automodule:: sad.task.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.task.dummy module
+---------------------
+
+.. automodule:: sad.task.dummy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: sad.task
+   :members:
+   :undoc-members:
+   :show-inheritance:

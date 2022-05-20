@@ -1,0 +1,37 @@
+sad.generator package
+=====================
+
+Submodules
+----------
+
+sad.generator.base module
+-------------------------
+
+.. automodule:: sad.generator.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.generator.implicit\_fb module
+---------------------------------
+
+.. automodule:: sad.generator.implicit_fb
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.generator.simulation module
+-------------------------------
+
+.. automodule:: sad.generator.simulation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: sad.generator
+   :members:
+   :undoc-members:
+   :show-inheritance:

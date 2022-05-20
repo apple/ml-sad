@@ -1,0 +1,45 @@
+sad.callback package
+====================
+
+Submodules
+----------
+
+sad.callback.base module
+------------------------
+
+.. automodule:: sad.callback.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.callback.caller module
+--------------------------
+
+.. automodule:: sad.callback.caller
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.callback.metrics\_logging module
+------------------------------------
+
+.. automodule:: sad.callback.metrics_logging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.callback.w\_l1\_scheduler module
+------------------------------------
+
+.. automodule:: sad.callback.w_l1_scheduler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: sad.callback
+   :members:
+   :undoc-members:
+   :show-inheritance:

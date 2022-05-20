@@ -1,0 +1,85 @@
+sad.model package
+=================
+
+Submodules
+----------
+
+sad.model.base module
+---------------------
+
+.. automodule:: sad.model.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.bpr module
+--------------------
+
+.. automodule:: sad.model.bpr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.cornac module
+-----------------------
+
+.. automodule:: sad.model.cornac
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.fm module
+-------------------
+
+.. automodule:: sad.model.fm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.msft\_ncf module
+--------------------------
+
+.. automodule:: sad.model.msft_ncf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.msft\_rbm module
+--------------------------
+
+.. automodule:: sad.model.msft_rbm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.msft\_vae module
+--------------------------
+
+.. automodule:: sad.model.msft_vae
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.sad module
+--------------------
+
+.. automodule:: sad.model.sad
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+sad.model.svd module
+--------------------
+
+.. automodule:: sad.model.svd
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: sad.model
+   :members:
+   :undoc-members:
+   :show-inheritance:

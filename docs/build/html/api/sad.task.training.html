@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.task.training package &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>sad.task.training package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/sad.task.training.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sad-task-training-package">
+<h1>sad.task.training package<a class="headerlink" href="#sad-task-training-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-sad.task.training.training">
+<span id="sad-task-training-training-module"></span><h2>sad.task.training.training module<a class="headerlink" href="#module-sad.task.training.training" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TrainingTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/task/training/training.html#TrainingTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.task.training.training.TrainingTask" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sad.task.html#sad.task.base.TaskBase" title="sad.task.base.TaskBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.task.base.TaskBase</span></code></a></p>
+<p>A concrete task class that will be responsible to train a model.</p>
+<p>This class inherits all existing properties in <code class="docutils literal notranslate"><span class="pre">sed.task.base.TaskBase</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.create_generator">
+<span class="sig-name descname"><span class="pre">create_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sad.generator.html#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></span><a class="reference internal" href="../_modules/sad/task/training/training.html#TrainingTask.create_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.task.training.training.TrainingTask.create_generator" title="Permalink to this definition"></a></dt>
+<dd><p>Instance method to create a generator for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code>) – An instance of model that will be
+associated with the generator.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An instance of generator class that
+will be used to train the model in a trainer, an instance of
+<code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.generator.GeneratorBase</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – When a generator instance is not able to create from
+    configuration in <code class="docutils literal notranslate"><span class="pre">self.generator_config</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.create_model">
+<span class="sig-name descname"><span class="pre">create_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></span><a class="reference internal" href="../_modules/sad/task/training/training.html#TrainingTask.create_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.task.training.training.TrainingTask.create_model" title="Permalink to this definition"></a></dt>
+<dd><p>Instance method to initialize a model for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An instance of model class that will be
+trained in current task.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – When a model instance is not able to initialize from
+    configuration in <code class="docutils literal notranslate"><span class="pre">self.model_config</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.create_trainer">
+<span class="sig-name descname"><span class="pre">create_trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.generator.html#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sad.trainer.html#sad.trainer.base.TrainerBase" title="sad.trainer.base.TrainerBase"><span class="pre">sad.trainer.base.TrainerBase</span></a></span></span><a class="reference internal" href="../_modules/sad/task/training/training.html#TrainingTask.create_trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.task.training.training.TrainingTask.create_trainer" title="Permalink to this definition"></a></dt>
+<dd><p>Instance method to create a trainer for training. Require an instance of
+<code class="docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code> and a <code class="docutils literal notranslate"><span class="pre">sad.generator.GeneratorBase</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code>) – An instance of model that will be
+associated with the trainer.</p></li>
+<li><p><strong>generator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.generator.GeneratorBase</span></code>) – An instance of generator
+that will be used by trainer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An instance of trainer class that will be
+used in current task.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – When a trainer instance is not able to initialize from
+    configuration in <code class="docutils literal notranslate"><span class="pre">self.trainer_config</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.filename">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sad.task.training.training.TrainingTask.filename" title="Permalink to this definition"></a></dt>
+<dd><p>A relative path pointing to where user-item interaction data are located.
+The path is relative to <code class="docutils literal notranslate"><span class="pre">self.input_dir</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.generator_config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generator_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.task.training.training.TrainingTask.generator_config" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary read from configuration of the task. It specifies the
+configuration to initialize a generator of type
+<code class="docutils literal notranslate"><span class="pre">sad.generator.GeneratorBase</span></code>. Will read directly from <code class="docutils literal notranslate"><span class="pre">&quot;generator&quot;</span></code> field
+from <code class="docutils literal notranslate"><span class="pre">self.config</span></code>.</p>
+<p>An example is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">ImplicitFeedbackGenerator</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">u_batch</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="n">i_batch</span><span class="p">:</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.model_config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.task.training.training.TrainingTask.model_config" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary read from configuration of the task. It specifies the
+configuration to initialize a model of type <code class="docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code>. Will read
+directly from <code class="docutils literal notranslate"><span class="pre">&quot;model&quot;</span></code> field from <code class="docutils literal notranslate"><span class="pre">self.config</span></code>.</p>
+<p>An example is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">SADModel</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">n</span><span class="p">:</span> <span class="mi">200</span>
+  <span class="n">m</span><span class="p">:</span> <span class="mi">500</span>
+  <span class="n">k</span><span class="p">:</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.model_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sad.task.training.training.TrainingTask.model_id" title="Permalink to this definition"></a></dt>
+<dd><p>A string that uniquely identifies a trained model. It is usually set to
+<code class="docutils literal notranslate"><span class="pre">&quot;model_{self.task_id}&quot;</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/task/training/training.html#TrainingTask.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.task.training.training.TrainingTask.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run training task.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.task.training.training.TrainingTask.trainer_config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trainer_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.task.training.training.TrainingTask.trainer_config" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary read from configuration of the task. It specifies the
+configuration to initialize a trainer of type
+<code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>. Will read directly from <code class="docutils literal notranslate"><span class="pre">&quot;trainer&quot;</span></code> field from
+<code class="docutils literal notranslate"><span class="pre">self.config</span></code>.</p>
+<p>An example is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">SGDTrainer</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">n_iters</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="n">u_idxs</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+  <span class="n">w_l1</span><span class="p">:</span> <span class="mf">0.01</span>
+  <span class="n">w_l2</span><span class="p">:</span> <span class="mf">0.01</span>
+
+  <span class="n">callbacks</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;MetricsLoggingCallback&quot;</span>
+    <span class="n">spec</span><span class="p">:</span>
+      <span class="n">every_iter</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="n">every_step</span><span class="p">:</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.task.training.training.run_task">
+<span class="sig-name descname"><span class="pre">run_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/task/training/training.html#run_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.task.training.training.run_task" title="Permalink to this definition"></a></dt>
+<dd><p>Main function that will be called when running a processing task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config_file</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – A <code class="docutils literal notranslate"><span class="pre">yml</span></code> file that contains configurations for
+running the processing task. Optional, when <code class="docutils literal notranslate"><span class="pre">None</span></code> a default file at
+<code class="docutils literal notranslate"><span class="pre">./ppgflow/tasks/processing/config.yml</span></code> will be used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-sad.task.training">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sad.task.training" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.task.training.training &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>sad.task.training.training</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.task.training.training</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">sad.generator</span> <span class="kn">import</span> <span class="n">GeneratorBase</span><span class="p">,</span> <span class="n">GeneratorFactory</span>
+<span class="kn">from</span> <span class="nn">sad.model</span> <span class="kn">import</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">ModelFactory</span>
+<span class="kn">from</span> <span class="nn">sad.task.base</span> <span class="kn">import</span> <span class="n">TaskBase</span>
+<span class="kn">from</span> <span class="nn">sad.trainer</span> <span class="kn">import</span> <span class="n">TrainerBase</span><span class="p">,</span> <span class="n">TrainerFactory</span>
+<span class="kn">from</span> <span class="nn">sad.utils.job</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
+<span class="kn">from</span> <span class="nn">sad.utils.logging</span> <span class="kn">import</span> <span class="n">setup_module_level_logger</span>
+
+
+<div class="viewcode-block" id="TrainingTask"><a class="viewcode-back" href="../../../../api/sad.task.training.html#sad.task.training.training.TrainingTask">[docs]</a><span class="k">class</span> <span class="nc">TrainingTask</span><span class="p">(</span><span class="n">TaskBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A concrete task class that will be responsible to train a model.</span>
+
+<span class="sd">    This class inherits all existing properties in ``sed.task.base.TaskBase``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A relative path pointing to where user-item interaction data are located.</span>
+<span class="sd">        The path is relative to ``self.input_dir``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A string that uniquely identifies a trained model. It is usually set to</span>
+<span class="sd">        ``&quot;model_{self.task_id}&quot;``.&quot;&quot;&quot;</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">model_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trainer_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A dictionary read from configuration of the task. It specifies the</span>
+<span class="sd">        configuration to initialize a trainer of type</span>
+<span class="sd">        ``sad.trainer.TrainerBase``. Will read directly from ``&quot;trainer&quot;`` field from</span>
+<span class="sd">        ``self.config``.</span>
+
+<span class="sd">        An example is shown below::</span>
+
+<span class="sd">            name: SGDTrainer</span>
+<span class="sd">            spec:</span>
+<span class="sd">              n_iters: 50</span>
+<span class="sd">              u_idxs: [0, 1, 2, 3, 4, 5]</span>
+<span class="sd">              w_l1: 0.01</span>
+<span class="sd">              w_l2: 0.01</span>
+
+<span class="sd">              callbacks:</span>
+<span class="sd">              - name: &quot;MetricsLoggingCallback&quot;</span>
+<span class="sd">                spec:</span>
+<span class="sd">                  every_iter: 1</span>
+<span class="sd">                  every_step: 2</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;trainer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A dictionary read from configuration of the task. It specifies the</span>
+<span class="sd">        configuration to initialize a model of type ``sad.model.ModelBase``. Will read</span>
+<span class="sd">        directly from ``&quot;model&quot;`` field from ``self.config``.</span>
+
+<span class="sd">        An example is shown below::</span>
+
+<span class="sd">            name: SADModel</span>
+<span class="sd">            spec:</span>
+<span class="sd">              n: 200</span>
+<span class="sd">              m: 500</span>
+<span class="sd">              k: 100</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">generator_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A dictionary read from configuration of the task. It specifies the</span>
+<span class="sd">        configuration to initialize a generator of type</span>
+<span class="sd">        ``sad.generator.GeneratorBase``. Will read directly from ``&quot;generator&quot;`` field</span>
+<span class="sd">        from ``self.config``.</span>
+
+<span class="sd">        An example is shown below::</span>
+
+<span class="sd">            name: ImplicitFeedbackGenerator</span>
+<span class="sd">            spec:</span>
+<span class="sd">              u_batch: 50</span>
+<span class="sd">              i_batch: 100</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TrainingTask.create_model"><a class="viewcode-back" href="../../../../api/sad.task.training.html#sad.task.training.training.TrainingTask.create_model">[docs]</a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Instance method to initialize a model for training.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`sad.model.ModelBase`: An instance of model class that will be</span>
+<span class="sd">            trained in current task.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: When a model instance is not able to initialize from</span>
+<span class="sd">                configuration in ``self.model_config``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_config</span>
+
+        <span class="c1"># setup relative path</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">s3_key_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">model_config</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">][</span><span class="s2">&quot;s3_key_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s3_key_path</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">ModelFactory</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="n">model_config</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unable to create model with config </span><span class="si">{</span><span class="n">model_config</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+
+        <span class="k">return</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="TrainingTask.create_generator"><a class="viewcode-back" href="../../../../api/sad.task.training.html#sad.task.training.training.TrainingTask.create_generator">[docs]</a>    <span class="k">def</span> <span class="nf">create_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ModelBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Instance method to create a generator for training.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (:obj:`sad.model.ModelBase`): An instance of model that will be</span>
+<span class="sd">                associated with the generator.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`sad.generator.GeneratorBase`: An instance of generator class that</span>
+<span class="sd">            will be used to train the model in a trainer, an instance of</span>
+<span class="sd">            ``sad.trainer.TrainerBase``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: When a generator instance is not able to create from</span>
+<span class="sd">                configuration in ``self.generator_config``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">generator_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_config</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">generator</span> <span class="o">=</span> <span class="n">GeneratorFactory</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span>
+                <span class="n">generator_config</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">self</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unable to create generator with config </span><span class="si">{</span><span class="n">generator_config</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+        <span class="k">return</span> <span class="n">generator</span></div>
+
+<div class="viewcode-block" id="TrainingTask.create_trainer"><a class="viewcode-back" href="../../../../api/sad.task.training.html#sad.task.training.training.TrainingTask.create_trainer">[docs]</a>    <span class="k">def</span> <span class="nf">create_trainer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">generator</span><span class="p">:</span> <span class="n">GeneratorBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainerBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Instance method to create a trainer for training. Require an instance of</span>
+<span class="sd">        ``sad.model.ModelBase`` and a ``sad.generator.GeneratorBase``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (:obj:`sad.model.ModelBase`): An instance of model that will be</span>
+<span class="sd">                associated with the trainer.</span>
+<span class="sd">            generator (:obj:`sad.generator.GeneratorBase`): An instance of generator</span>
+<span class="sd">                that will be used by trainer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`sad.trainer.TrainerBase`: An instance of trainer class that will be</span>
+<span class="sd">            used in current task.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: When a trainer instance is not able to initialize from</span>
+<span class="sd">                configuration in ``self.trainer_config``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trainer_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer_config</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">trainer</span> <span class="o">=</span> <span class="n">TrainerFactory</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span>
+                <span class="n">trainer_config</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">self</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unable to create trainer with config </span><span class="si">{</span><span class="n">trainer_config</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+
+        <span class="k">return</span> <span class="n">trainer</span></div>
+
+<div class="viewcode-block" id="TrainingTask.run"><a class="viewcode-back" href="../../../../api/sad.task.training.html#sad.task.training.training.TrainingTask.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run training task.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_config</span><span class="p">()</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_model</span><span class="p">()</span>
+        <span class="n">generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_generator</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># prepare data for training</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2"> for training doesn&#39;t exist. Aborting.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">generator</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+        <span class="n">trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_trainer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">generator</span><span class="p">)</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Task succeed!&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="run_task"><a class="viewcode-back" href="../../../../api/sad.task.training.html#sad.task.training.training.run_task">[docs]</a><span class="k">def</span> <span class="nf">run_task</span><span class="p">(</span><span class="n">config_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main function that will be called when running a processing task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_file (:obj:`str`): A ``yml`` file that contains configurations for</span>
+<span class="sd">            running the processing task. Optional, when ``None`` a default file at</span>
+<span class="sd">            ``./ppgflow/tasks/processing/config.yml`` will be used.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">setup_module_level_logger</span><span class="p">([</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;processor&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">config_file</span><span class="p">:</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="s2">&quot;./ppgflow/tasks/processing/config.yml&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="n">input_dir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_dir&quot;</span><span class="p">)</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_dir&quot;</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">TrainingTask</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">config_file</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">run_task</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

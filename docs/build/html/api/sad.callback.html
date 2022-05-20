@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.callback package &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>sad.callback package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/sad.callback.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sad-callback-package">
+<h1>sad.callback package<a class="headerlink" href="#sad-callback-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-sad.callback.base">
+<span id="sad-callback-base-module"></span><h2>sad.callback.base module<a class="headerlink" href="#module-sad.callback.base" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CallbackBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.callback.caller.CallerProtocol" title="sad.callback.caller.CallerProtocol"><span class="pre">sad.callback.caller.CallerProtocol</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>A callback base class that every concrete callback subclass will inherit from.</p>
+<p>Instance of this class will be managed by a caller instance that is compliant with
+<code class="docutils literal notranslate"><span class="pre">CallerProtocol</span></code>. Currently instances of <code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code> classes could
+be such callers. Callback instances will be created during caller’s initialization.
+Configurations for this callback is provided under
+<code class="docutils literal notranslate"><span class="pre">caller:spec:callbacks:</span></code>. An example is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">SGDTrainer</span>
+  <span class="n">spec</span><span class="p">:</span>
+    <span class="n">n_iters</span><span class="p">:</span> <span class="mi">20</span>
+    <span class="n">w_l1</span><span class="p">:</span> <span class="mf">0.1</span>
+    <span class="n">w_l2</span><span class="p">:</span> <span class="mf">0.0</span>
+    <span class="n">u_idxs</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">callbacks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;CheckpointingCallback&quot;</span>
+      <span class="n">spec</span><span class="p">:</span>
+        <span class="n">start</span><span class="p">:</span> <span class="mi">10</span>
+        <span class="n">every</span><span class="p">:</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.caller">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">caller</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#sad.callback.caller.CallerProtocol" title="sad.callback.caller.CallerProtocol"><span class="pre">sad.callback.caller.CallerProtocol</span></a></em><a class="headerlink" href="#sad.callback.base.CallbackBase.caller" title="Permalink to this definition"></a></dt>
+<dd><p>Reference to an instance of a caller class that is compliant with
+<code class="docutils literal notranslate"><span class="pre">CallerProtocol</span></code>. Could be an instance of <code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.callback.base.CallbackBase.config" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration dictionary that is used to initialize the instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.on_iter_begin">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_iter_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase.on_iter_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase.on_iter_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when an iteration begins. An iteration could be
+an epoch during training loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration, 0-based.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.on_iter_end">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_iter_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase.on_iter_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase.on_iter_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when an iteration ends.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration. 0-based.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.on_loop_begin">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_loop_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase.on_loop_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase.on_loop_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when main loop begins. The main loop could be
+training loop in <code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.on_loop_end">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_loop_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase.on_loop_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase.on_loop_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when main loop ends.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.on_step_begin">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_step_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase.on_step_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase.on_step_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when a step begins. A step could be one gradient
+updates from a minibatch during training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration. 0-based.</p></li>
+<li><p><strong>step_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of step. 0-based.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.on_step_end">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_step_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackBase.on_step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackBase.on_step_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when a step finishes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration. 0-based.</p></li>
+<li><p><strong>step_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of step. 0-based.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackBase.spec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.callback.base.CallbackBase.spec" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to <code class="docutils literal notranslate"><span class="pre">&quot;spec&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.config</span></code>. When no such field exists
+or the value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, an empty dictionary will be set.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CallbackFactory</span></span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackFactory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A factory class that is responsible to create callback instances.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackFactory.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">callback.CallbackFactory</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#sad.callback.base.CallbackFactory.logger" title="Permalink to this definition"></a></dt>
+<dd><p>Class attribute for logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackFactory.produce">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.callback.caller.CallerProtocol" title="sad.callback.caller.CallerProtocol"><span class="pre">sad.callback.caller.CallerProtocol</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sad.callback.base.CallbackBase" title="sad.callback.base.CallbackBase"><span class="pre">sad.callback.base.CallbackBase</span></a></span></span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackFactory.produce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackFactory.produce" title="Permalink to this definition"></a></dt>
+<dd><p>A class method to initialize instances of <code class="docutils literal notranslate"><span class="pre">sad.callback.CallbackBase</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">config</span></code>) – <p>Configuration used to initialize an instance object.
+An example is given below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="s2">&quot;EarlyStoppingCallback&quot;</span>
+<span class="n">spec</span><span class="p">:</span>
+    <span class="n">allow_incomplete_epoch</span><span class="p">:</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>caller</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sad.callback.CallerProtocol</span></code>) – An instance of a class that
+is compliant with <code class="docutils literal notranslate"><span class="pre">CallerProtocol</span></code>. Currently
+<code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code> is of this class type. A callback
+instance will be created with its caller. During caller’s loop, callback
+methods will be invoked.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.base.CallbackFactory.register">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.callback.base.CallbackBase" title="sad.callback.base.CallbackBase"><span class="pre">sad.callback.base.CallbackBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sad.callback.base.CallbackBase" title="sad.callback.base.CallbackBase"><span class="pre">sad.callback.base.CallbackBase</span></a></span></span><a class="reference internal" href="../_modules/sad/callback/base.html#CallbackFactory.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.base.CallbackFactory.register" title="Permalink to this definition"></a></dt>
+<dd><p>A class level decorator responsible to decorate <code class="docutils literal notranslate"><span class="pre">sad.callback.CallbackBase</span></code>
+classes and register them into <code class="docutils literal notranslate"><span class="pre">CallbackFactory._registry</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.callback.caller">
+<span id="sad-callback-caller-module"></span><h2>sad.callback.caller module<a class="headerlink" href="#module-sad.callback.caller" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CallerProtocol</span></span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>A caller protocol that defines a set of interfaces that will be used to interact
+with instances of <code class="docutils literal notranslate"><span class="pre">sad.callback.CallbackBase</span></code>. Currently
+<code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code> is respecting this protocol.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.callbacks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callbacks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">sad.callback.CallbackBase</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.callbacks" title="Permalink to this definition"></a></dt>
+<dd><p>A list of callback instances this caller owns.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.config">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.config" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration dictionary that is used to initialize instances of classes
+compliant with <code class="docutils literal notranslate"><span class="pre">CallerProtocal</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.generator">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.generator.html#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.generator" title="Permalink to this definition"></a></dt>
+<dd><p>An instance of <code class="docutils literal notranslate"><span class="pre">sad.model.GeneratorBase</span></code>. A reference to such an instance
+that will be used to generate data to train <code class="docutils literal notranslate"><span class="pre">self.model</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.initialize_callback">
+<span class="sig-name descname"><span class="pre">initialize_callback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.initialize_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.initialize_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize callbacks. Callback configurations are supplied under
+<code class="docutils literal notranslate"><span class="pre">trainer:spec:callbacks</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.config</span></code>. <code class="docutils literal notranslate"><span class="pre">self.spec</span></code> holds a
+reference to <code class="docutils literal notranslate"><span class="pre">self.config[&quot;spec&quot;]</span></code>.</p>
+<p>Initialized instances of <code class="docutils literal notranslate"><span class="pre">sad.callback.CallbackBase</span></code> will be pushed to
+<code class="docutils literal notranslate"><span class="pre">self.callbacks</span></code>, with the same order as their appear in configuration
+<code class="docutils literal notranslate"><span class="pre">caller:spec:callbacks</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.model" title="Permalink to this definition"></a></dt>
+<dd><p>An instance of <code class="docutils literal notranslate"><span class="pre">sad.model.ModelBase</span></code>. A reference to such an instance
+that will be trained by the caller.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.n_iters">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_iters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.n_iters" title="Permalink to this definition"></a></dt>
+<dd><p>An integer suggests how many iterations the caller will perform.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.on_iter_begin">
+<span class="sig-name descname"><span class="pre">on_iter_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.on_iter_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.on_iter_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when an iteration begins. An iteration could be an epoch
+during training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration, 0-based.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.on_iter_end">
+<span class="sig-name descname"><span class="pre">on_iter_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.on_iter_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.on_iter_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when an iteration finishes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of an iteration. 0-based.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.on_loop_begin">
+<span class="sig-name descname"><span class="pre">on_loop_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.on_loop_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.on_loop_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when main loop begins.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.on_loop_end">
+<span class="sig-name descname"><span class="pre">on_loop_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.on_loop_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.on_loop_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when main loop finishes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.on_step_begin">
+<span class="sig-name descname"><span class="pre">on_step_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.on_step_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.on_step_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when step begins. A step could be a gradient update from
+a minibatch during training loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration. 0-based.</p></li>
+<li><p><strong>step_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of step. 0-based.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.on_step_end">
+<span class="sig-name descname"><span class="pre">on_step_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.on_step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.on_step_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when a step finishes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration. 0-based.</p></li>
+<li><p><strong>step_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of step. 0-based.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.register_callback">
+<span class="sig-name descname"><span class="pre">register_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.callback.base.CallbackBase" title="sad.callback.base.CallbackBase"><span class="pre">CallbackBase</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/caller.html#CallerProtocol.register_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.caller.CallerProtocol.register_callback" title="Permalink to this definition"></a></dt>
+<dd><p>Callback registration. The actual place where a callback instance is pushed
+to <code class="docutils literal notranslate"><span class="pre">self.callbacks</span></code> list. This function will be called when a callback
+instance is initialized - newly created callback instances will register
+themselves to their caller.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>callback</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">CallbackBase</span></code>) – An instance of
+<code class="docutils literal notranslate"><span class="pre">sad.callback.CallbackBase</span></code>. It is at the initialization of
+<code class="docutils literal notranslate"><span class="pre">callback</span></code> argument when this method is called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.spec">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.spec" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to <code class="docutils literal notranslate"><span class="pre">&quot;spec&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.config</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.stop">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.stop" title="Permalink to this definition"></a></dt>
+<dd><p>A flag to indicate caller if early stop is needed.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.caller.CallerProtocol.task">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.task.html#sad.task.base.TaskBase" title="sad.task.base.TaskBase"><span class="pre">sad.task.base.TaskBase</span></a></em><a class="headerlink" href="#sad.callback.caller.CallerProtocol.task" title="Permalink to this definition"></a></dt>
+<dd><p>An instance of <code class="docutils literal notranslate"><span class="pre">sad.task.TaskBase</span></code>. It is a reference to a task instance
+in which current caller is initialized.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.callback.metrics_logging">
+<span id="sad-callback-metrics-logging-module"></span><h2>sad.callback.metrics_logging module<a class="headerlink" href="#module-sad.callback.metrics_logging" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MetricsLoggingCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.callback.caller.CallerProtocol" title="sad.callback.caller.CallerProtocol"><span class="pre">sad.callback.caller.CallerProtocol</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.callback.base.CallbackBase" title="sad.callback.base.CallbackBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.callback.base.CallbackBase</span></code></a></p>
+<p>A callback class that is responsible to log metrics during caller’s main loop.</p>
+<p>Instance of this class will be managed by caller instances that is compliant with
+<code class="docutils literal notranslate"><span class="pre">sad.caller.CallerProtocol</span></code>, during caller’s initialization. Configurations
+for this callback is provided under <code class="docutils literal notranslate"><span class="pre">trainer:spec:callbacks:</span></code>. An example is shown
+below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">SGDTrainer</span>
+  <span class="n">spec</span><span class="p">:</span>
+    <span class="n">n_iters</span><span class="p">:</span> <span class="mi">20</span>
+    <span class="n">w_l1</span><span class="p">:</span> <span class="mf">0.1</span>
+    <span class="n">w_l2</span><span class="p">:</span> <span class="mf">0.0</span>
+    <span class="n">u_idxs</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">callbacks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;MetricsLoggingCallback&quot;</span>
+      <span class="n">spec</span><span class="p">:</span>
+        <span class="n">every_iter</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="n">every_step</span><span class="p">:</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.every_iter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">every_iter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.every_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Number of iterations every logging event happens. Read directly from
+<code class="docutils literal notranslate"><span class="pre">&quot;every_iter&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A negative number suggests no metrics
+logging will happen at <code class="docutils literal notranslate"><span class="pre">iteration</span></code> ends.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.every_step">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">every_step</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.every_step" title="Permalink to this definition"></a></dt>
+<dd><p>Number of steps every logging event happens. Read directly from
+<code class="docutils literal notranslate"><span class="pre">&quot;every_step&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. A negative number suggests this
+callback will not log metrics at <code class="docutils literal notranslate"><span class="pre">step</span></code> ends.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.history">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">history</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.history" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary that holds metrics history. It has following fields:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">history</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;step_end&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="n">iter_idx</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">,</span> <span class="n">metrics</span><span class="p">),</span> <span class="o">...</span> <span class="p">],</span>
+    <span class="s2">&quot;iter_end&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="n">iter_idx</span><span class="p">,</span> <span class="n">metrics</span><span class="p">),</span> <span class="o">...</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">metrics</span></code> in the list is a dictionary by itself, with following fields:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ll&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">log</span> <span class="n">likelihood</span> <span class="n">of</span> <span class="n">trained</span> <span class="n">model</span>
+    <span class="s2">&quot;t_sparsity&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">sparsity</span> <span class="n">of</span> <span class="n">right</span> <span class="n">item</span> <span class="n">matrix</span>
+    <span class="s2">&quot;mse&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">MSE</span> <span class="n">wrt</span> <span class="n">true</span> <span class="n">parameter</span> <span class="n">X</span><span class="p">,</span> <span class="n">available</span> <span class="ow">in</span> <span class="n">simulation</span>
+    <span class="s2">&quot;ll0&quot;</span><span class="p">:</span> <span class="nb">float</span>   <span class="o">//</span> <span class="kc">True</span> <span class="n">log</span> <span class="n">likelihood</span><span class="p">,</span> <span class="n">available</span> <span class="ow">in</span> <span class="n">simulation</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This information will be saved to <code class="docutils literal notranslate"><span class="pre">metricsloggingcallback_history.json</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.on_iter_begin">
+<span class="sig-name descname"><span class="pre">on_iter_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback.on_iter_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.on_iter_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when an iteration begins. An iteration could be
+an epoch during training loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration, 0-based.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.on_iter_end">
+<span class="sig-name descname"><span class="pre">on_iter_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_sparsity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ll0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback.on_iter_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.on_iter_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called to determine whether to log metrics at the end of an iteration.
+After confirming, it will organize metrics to a dictionary and push the
+dictionary into a history queue. The format of the dictionary is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ll&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">log</span> <span class="n">likelihood</span> <span class="n">of</span> <span class="n">trained</span> <span class="n">model</span>
+    <span class="s2">&quot;t_sparsity&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">sparsity</span> <span class="n">of</span> <span class="n">right</span> <span class="n">item</span> <span class="n">matrix</span>
+    <span class="s2">&quot;mse&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">MSE</span> <span class="n">wrt</span> <span class="n">true</span> <span class="n">parameter</span> <span class="n">X</span><span class="p">,</span> <span class="n">available</span> <span class="ow">in</span> <span class="n">simulation</span>
+    <span class="s2">&quot;ll0&quot;</span><span class="p">:</span> <span class="nb">float</span>   <span class="o">//</span> <span class="kc">True</span> <span class="n">log</span> <span class="n">likelihood</span><span class="p">,</span> <span class="n">available</span> <span class="ow">in</span> <span class="n">simulation</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration, 0-based.</p></li>
+<li><p><strong>ll</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Log likelihood at current iteration.</p></li>
+<li><p><strong>t_sparsity</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The proportion of elements that are close to <code class="docutils literal notranslate"><span class="pre">1</span></code>
+in <code class="docutils literal notranslate"><span class="pre">T</span></code> matrix.</p></li>
+<li><p><strong>mse</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The mean squared error between estimated item preference
+tensor and true tensor. Only available in simulation.</p></li>
+<li><p><strong>ll0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Log likelihood under true parameter values. Only
+available in simulation.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.on_loop_begin">
+<span class="sig-name descname"><span class="pre">on_loop_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback.on_loop_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.on_loop_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when main loop begins. The main loop could be
+training loop in <code class="docutils literal notranslate"><span class="pre">sad.trainer.TrainerBase</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.on_loop_end">
+<span class="sig-name descname"><span class="pre">on_loop_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback.on_loop_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.on_loop_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called when caller’s main loop finishes. When this method is
+triggered, the metrics history will be saved to a Json file with name
+<code class="docutils literal notranslate"><span class="pre">metricsloggingcallback_history.json</span></code> in the model folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.on_step_begin">
+<span class="sig-name descname"><span class="pre">on_step_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback.on_step_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.on_step_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called from caller when a step begins. A step could be one gradient
+updates from a minibatch during training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration. 0-based.</p></li>
+<li><p><strong>step_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of step. 0-based.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.metrics_logging.MetricsLoggingCallback.on_step_end">
+<span class="sig-name descname"><span class="pre">on_step_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_sparsity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ll0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/metrics_logging.html#MetricsLoggingCallback.on_step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.metrics_logging.MetricsLoggingCallback.on_step_end" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called to determine whether to log metrics at end of a step. After
+confirming, it will organize metrics to a dictionary and push the dictionary
+into history queue. The format of the dictionary is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ll&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">log</span> <span class="n">likelihood</span> <span class="n">of</span> <span class="n">trained</span> <span class="n">model</span>
+    <span class="s2">&quot;t_sparsity&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">sparsity</span> <span class="n">of</span> <span class="n">right</span> <span class="n">item</span> <span class="n">matrix</span>
+    <span class="s2">&quot;mse&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="o">//</span> <span class="n">MSE</span> <span class="n">wrt</span> <span class="n">true</span> <span class="n">parameter</span> <span class="n">X</span><span class="p">,</span> <span class="n">available</span> <span class="ow">in</span> <span class="n">simulation</span>
+    <span class="s2">&quot;ll0&quot;</span><span class="p">:</span> <span class="nb">float</span>   <span class="o">//</span> <span class="kc">True</span> <span class="n">log</span> <span class="n">likelihood</span><span class="p">,</span> <span class="n">available</span> <span class="ow">in</span> <span class="n">simulation</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration, 0-based.</p></li>
+<li><p><strong>step_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of step, 0-based.</p></li>
+<li><p><strong>ll</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Log likelihood at current step.</p></li>
+<li><p><strong>t_sparsity</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The proportion of elements that are close to <code class="docutils literal notranslate"><span class="pre">1</span></code>
+in <code class="docutils literal notranslate"><span class="pre">T</span></code> matrix.</p></li>
+<li><p><strong>mse</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The mean squared error between estimated item preference
+tensor and true tensor. Only available in simulation.</p></li>
+<li><p><strong>ll0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Log likelihood under true parameter values. Only
+available in simulation.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.callback.w_l1_scheduler">
+<span id="sad-callback-w-l1-scheduler-module"></span><h2>sad.callback.w_l1_scheduler module<a class="headerlink" href="#module-sad.callback.w_l1_scheduler" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WeightL1SchedulerCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.callback.caller.CallerProtocol" title="sad.callback.caller.CallerProtocol"><span class="pre">sad.callback.caller.CallerProtocol</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.callback.base.CallbackBase" title="sad.callback.base.CallbackBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.callback.base.CallbackBase</span></code></a></p>
+<p>A callback class that is responsible to update weight of L1 regularization during
+training.</p>
+<p>Instance of this class will be managed by instances compliant with
+<code class="docutils literal notranslate"><span class="pre">sad.caller.CallerProtocol</span></code> instances, during caller’s’ initialization.
+Configurations for this callback is provided under
+<code class="docutils literal notranslate"><span class="pre">trainer:spec:callbacks:</span></code>. An example is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">SGDTrainer</span>
+  <span class="n">spec</span><span class="p">:</span>
+    <span class="n">n_iters</span><span class="p">:</span> <span class="mi">20</span>
+    <span class="n">w_l1</span><span class="p">:</span> <span class="mf">0.1</span>
+    <span class="n">w_l2</span><span class="p">:</span> <span class="mf">0.0</span>
+    <span class="n">u_idxs</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">callbacks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;WeightL1SchedulerCallback&quot;</span>
+      <span class="n">spec</span><span class="p">:</span>
+        <span class="n">scheme</span><span class="p">:</span> <span class="s2">&quot;exp_rise&quot;</span>
+        <span class="n">rate</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span>
+        <span class="n">start</span><span class="p">:</span> <span class="mf">0.5</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.every">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">every</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.every" title="Permalink to this definition"></a></dt>
+<dd><p>Number of iterations every update is performed. <code class="docutils literal notranslate"><span class="pre">1</span></code> means weight of L1
+regularization is subject to change for every iteration. Will read directly from
+<code class="docutils literal notranslate"><span class="pre">&quot;every&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.load" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.new_w_l1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_w_l1</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.new_w_l1" title="Permalink to this definition"></a></dt>
+<dd><p>The new weight of L1 regularization. Effective when <code class="docutils literal notranslate"><span class="pre">self.scheme</span></code> is set to
+<code class="docutils literal notranslate"><span class="pre">&quot;step&quot;</span></code>. When activated, <code class="docutils literal notranslate"><span class="pre">w_l1</span></code> will be changed to <code class="docutils literal notranslate"><span class="pre">self.new_w_l1</span></code>. Will
+read directly from <code class="docutils literal notranslate"><span class="pre">&quot;new_w_l1&quot;</span></code> field under <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_iter_begin">
+<span class="sig-name descname"><span class="pre">on_iter_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.on_iter_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_iter_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Will be called to determine whether to attempt to update the weight of L1
+regulation when an iteration begins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iter_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The index of iteration, 0-based.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_iter_end">
+<span class="sig-name descname"><span class="pre">on_iter_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.on_iter_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_iter_end" title="Permalink to this definition"></a></dt>
+<dd><p>Not applicable to this class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_loop_begin">
+<span class="sig-name descname"><span class="pre">on_loop_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.on_loop_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_loop_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Not applicable to this class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_loop_end">
+<span class="sig-name descname"><span class="pre">on_loop_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.on_loop_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_loop_end" title="Permalink to this definition"></a></dt>
+<dd><p>Not applicable to this class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_step_begin">
+<span class="sig-name descname"><span class="pre">on_step_begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.on_step_begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_step_begin" title="Permalink to this definition"></a></dt>
+<dd><p>Not applicable to this class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_step_end">
+<span class="sig-name descname"><span class="pre">on_step_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.on_step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.on_step_end" title="Permalink to this definition"></a></dt>
+<dd><p>To be determined.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.rate">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.rate" title="Permalink to this definition"></a></dt>
+<dd><p>The rate of rise. Effective when <code class="docutils literal notranslate"><span class="pre">self.scheme</span></code> is set to <code class="docutils literal notranslate"><span class="pre">&quot;exp_rise&quot;</span></code>.
+When activated,  weight of L1 regularization will be changed by multiplying its
+value by <code class="docutils literal notranslate"><span class="pre">exp(rate)</span></code>. Will read directly from <code class="docutils literal notranslate"><span class="pre">&quot;rate&quot;</span></code> field in
+<code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#WeightL1SchedulerCallback.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.scheme">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scheme</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.scheme" title="Permalink to this definition"></a></dt>
+<dd><p>The scheme of how weight of L1 regularization will be changed. Currently can
+take <code class="docutils literal notranslate"><span class="pre">&quot;exp_rise&quot;|&quot;step&quot;</span></code>. Will read directly from <code class="docutils literal notranslate"><span class="pre">&quot;scheme&quot;</span></code> field from
+<code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.start">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.callback.w_l1_scheduler.WeightL1SchedulerCallback.start" title="Permalink to this definition"></a></dt>
+<dd><p>A positive number suggesting when to start to apply changes to weight of L1
+regularization. When <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>, it will be treated as a proportion,
+suggesting <code class="docutils literal notranslate"><span class="pre">w_l1</span></code> will subject to change when
+<code class="docutils literal notranslate"><span class="pre">iter_idx</span> <span class="pre">&gt;=</span> <span class="pre">int(n_iters</span> <span class="pre">*</span> <span class="pre">start)</span></code>. Otherwise, <code class="docutils literal notranslate"><span class="pre">iter_idx</span> <span class="pre">&gt;=</span> <span class="pre">int(start)</span></code> will
+be the condition.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.exp_rise">
+<span class="sig-name descname"><span class="pre">exp_rise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w_l1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#exp_rise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.exp_rise" title="Permalink to this definition"></a></dt>
+<dd><p>A scheduling function to calculate new weight of L1 regularization with
+exponential rise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w_l1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Current weight of L1 regularization.</p></li>
+<li><p><strong>rate</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The rate of rise. When activated, <code class="docutils literal notranslate"><span class="pre">w_l1</span></code> will be
+changed by multiplying <code class="docutils literal notranslate"><span class="pre">exp(rate)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Updated weight of L1 regularization.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sad.callback.w_l1_scheduler.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w_l1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_w_l1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/sad/callback/w_l1_scheduler.html#step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.callback.w_l1_scheduler.step" title="Permalink to this definition"></a></dt>
+<dd><p>A scheduling function to update learning rate..</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w_l1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Current weight of L1 regularization.</p></li>
+<li><p><strong>new_w_l1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – New weight of L1 regularization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Updated weight of L1 regularization.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-sad.callback">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sad.callback" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

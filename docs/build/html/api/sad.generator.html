@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.generator package &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>sad.generator package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/sad.generator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sad-generator-package">
+<h1>sad.generator package<a class="headerlink" href="#sad-generator-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-sad.generator.base">
+<span id="sad-generator-base-module"></span><h2>sad.generator.base module<a class="headerlink" href="#module-sad.generator.base" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeneratorBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>A generator base class that all concrete generator classes should inherit from.
+A generator class should also be an iterable, by implementing <code class="docutils literal notranslate"><span class="pre">__iter__</span></code> method.</p>
+<p>The way a generator works is that file(s) containing training/validation
+samples will be first added to the generator by calling <code class="docutils literal notranslate"><span class="pre">self.add(file)</span></code>. Then
+by calling <code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code>, the generator is informed that all files have been
+added, and it is the time to get ready to iterate through the files and produce
+samples. At this point, one can use the generator in following manner:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">features</span><span class="p">,</span> <span class="n">targets</span> <span class="ow">in</span> <span class="n">my_generator</span><span class="p">:</span>
+    <span class="c1"># fit my model</span>
+</pre></div>
+</div>
+<p>To only iterate through training samples, one can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">features</span><span class="p">,</span> <span class="n">targets</span> <span class="ow">in</span> <span class="n">my_generator</span><span class="o">.</span><span class="n">get_trn</span><span class="p">():</span>
+    <span class="c1"># fit my model</span>
+</pre></div>
+</div>
+<p>Same applies to validation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorBase.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorBase.add" title="Permalink to this definition"></a></dt>
+<dd><p>A method to add a local file to generator. The local file contains data from
+which mini-batches of training/validation samples will be read.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – A file path pointing the file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.batch_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.batch_size" title="Permalink to this definition"></a></dt>
+<dd><p>Batch size when generating samples in minibatch.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.config" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration information that is used to initialize the generator instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.data" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary with keys being user ids and values being a list of item ids
+that user has interacted with. Lists of complete users and items will be inferred
+from it. Will be set after <code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code> is called.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.get_trn">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_trn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorBase.get_trn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorBase.get_trn" title="Permalink to this definition"></a></dt>
+<dd><p>Interface to generator samples for model training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An iterable that training samples will be iterated
+through in mini-batches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator[Any]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.get_val_or_not">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_val_or_not</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorBase.get_val_or_not"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorBase.get_val_or_not" title="Permalink to this definition"></a></dt>
+<dd><p>Interface to generator samples for validating model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An iterable that validation samples will be iterated
+through in mini-batches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator[Any]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.i_batch">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">i_batch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.i_batch" title="Permalink to this definition"></a></dt>
+<dd><p>The number of random items that will be chosen when working in <code class="docutils literal notranslate"><span class="pre">&quot;random&quot;</span></code>
+mode. Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;i_batch&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. When not
+configured, it will be set to 20% items.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.input_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.input_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.task.input_dir</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.input_files">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_files</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.input_files" title="Permalink to this definition"></a></dt>
+<dd><p>A list of files from where samples will be read.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.item_id_to_idx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">item_id_to_idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.item_id_to_idx" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary with keys being item id and values being the index. It is the
+inverse mapping of <code class="docutils literal notranslate"><span class="pre">self.item_idx_to_id</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.item_idx_to_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">item_idx_to_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.item_idx_to_id" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary with keys being item indices from zero to <code class="docutils literal notranslate"><span class="pre">n_items-1</span></code>, and
+values being their ids. Will be set after <code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code> is called.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.mode">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#sad.generator.base.GeneratorBase.mode" title="Permalink to this definition"></a></dt>
+<dd><p>The mode of how generator works. Currently supports two
+configurations: <code class="docutils literal notranslate"><span class="pre">&quot;random|iteration&quot;</span></code>.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;random&quot;</span></code>: When working in this mode, a number of <code class="docutils literal notranslate"><span class="pre">self.u_batch</span></code>
+random users will be selected (with replacement) from entire user set
+in an iteration. For items, a number of <code class="docutils literal notranslate"><span class="pre">self.i_batch</span></code> positive items
+that each user has interacted with will be randomly (with replacement)
+generated. Same number of negative items that user hasn’t interacted
+with will be randomly generated as well, producing triplets of samples
+in the format of (user, item i (interacted), item j (non-interacted)).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;iteration&quot;</span></code>: When working in this mode, all users will be iterated
+through in a randomized order. Same to items. For each positive user-item
+interaction, a number of <code class="docutils literal notranslate"><span class="pre">self.n_negatives</span></code> non-interacted items will
+be randomly selected.</p></li>
+</ol>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.model" title="Permalink to this definition"></a></dt>
+<dd><p>A trainable model instance, which will be trained using samples produced by
+current generator instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.n_negatives">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_negatives</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.n_negatives" title="Permalink to this definition"></a></dt>
+<dd><p>The number of negative samples will be drawn for each positive user-item
+interaction. Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;n_negatives&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. Valid
+when the generator is performing in <code class="docutils literal notranslate"><span class="pre">&quot;iteration&quot;</span></code> mode. Default to five.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.output_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.output_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Read directly from <code class="docutils literal notranslate"><span class="pre">self.task.output_dir</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.prepare">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorBase.prepare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorBase.prepare" title="Permalink to this definition"></a></dt>
+<dd><p>A method to inform generator to setup things in order to be prepared for
+generating samples. Concrete subclasses are responsible to implement this method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorBase.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorBase.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save generator’s configuration to a folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>working_dir</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – A local path where the configuration of the
+generator will be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.spec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.spec" title="Permalink to this definition"></a></dt>
+<dd><p>A reference to <code class="docutils literal notranslate"><span class="pre">&quot;spec&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.config</span></code>. If such field does not
+exist or its value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, an empty dictionary will be created.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.task">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sad.tasks.training.TrainingTask</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.task" title="Permalink to this definition"></a></dt>
+<dd><p>An instance of training task associated with the generator. It is the task
+in which current generator is initialized.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.tensor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.tensor" title="Permalink to this definition"></a></dt>
+<dd><p>A three way array with shape of <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">m</span> <span class="pre">x</span> <span class="pre">m</span></code> where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of
+users, and <code class="docutils literal notranslate"><span class="pre">m</span></code> is the number of items. A value of <code class="docutils literal notranslate"><span class="pre">1</span></code> at location
+<code class="docutils literal notranslate"><span class="pre">(u,</span> <span class="pre">i,</span> <span class="pre">j)</span></code> suggests <code class="docutils literal notranslate"><span class="pre">u</span></code>-th user prefers <code class="docutils literal notranslate"><span class="pre">i</span></code>-th item over <code class="docutils literal notranslate"><span class="pre">j</span></code>-th item.
+<code class="docutils literal notranslate"><span class="pre">-1</span></code> suggests the opposite. A value of <code class="docutils literal notranslate"><span class="pre">0</span></code> means no information available to
+determine the preference of the two items. Value will be optionally set after
+<code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code> is called, depending on the value of <code class="docutils literal notranslate"><span class="pre">self.tensor_flag</span></code>,
+for the purpose of saving memory.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.tensor_flag">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tensor_flag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.tensor_flag" title="Permalink to this definition"></a></dt>
+<dd><p>A boolean flag to indicate if three way data tensor <code class="docutils literal notranslate"><span class="pre">self.tensor</span></code> will be
+constructed. <code class="docutils literal notranslate"><span class="pre">False</span></code> will stop creating the tensor to save memory consumption.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.u_batch">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">u_batch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.u_batch" title="Permalink to this definition"></a></dt>
+<dd><p>The number of random users that will be chosen when working in <code class="docutils literal notranslate"><span class="pre">&quot;random&quot;</span></code>
+mode. Read directly from <code class="docutils literal notranslate"><span class="pre">&quot;u_batch&quot;</span></code> field in <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. When not
+configured, it will be set to 20% users.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.uidx_to_iidxs_tuple">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uidx_to_iidxs_tuple</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.uidx_to_iidxs_tuple" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary mapping from user idx to a tuple in which the first
+element is a set of item idxs the user has interacted with, and the second one
+is a set of non-interacted item idxs. Will be set after <code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code> is
+called.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.user_id_to_idx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_id_to_idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.user_id_to_idx" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary with keys being user id and values being the index. It is the
+inverse mapping of <code class="docutils literal notranslate"><span class="pre">self.user_idx_to_id</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.user_idx_to_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_idx_to_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.user_idx_to_id" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary with keys being user indices from zero to <code class="docutils literal notranslate"><span class="pre">n_users-1</span></code>, and
+values being their ids. Will be set after <code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code> is called.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorBase.user_idx_to_preference">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user_idx_to_preference</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#sad.generator.base.GeneratorBase.user_idx_to_preference" title="Permalink to this definition"></a></dt>
+<dd><p>A dictionary contains a mapping between user idx and item pairs that the user
+prefer one over the other. The item pairs are stored in a dictionary as well,
+with key being a tuple of two item ids, and value being <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeneratorFactory</span></span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorFactory" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A factory class that is responsible to create generator instances.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorFactory.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">generator.GeneratorFactory</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#sad.generator.base.GeneratorFactory.logger" title="Permalink to this definition"></a></dt>
+<dd><p>Class attribute for logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">logging.Logger</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorFactory.produce">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">produce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.base.ModelBase" title="sad.model.base.ModelBase"><span class="pre">sad.model.base.ModelBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorFactory.produce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorFactory.produce" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.base.GeneratorFactory.register">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><span class="pre">sad.generator.base.GeneratorBase</span></a></span></span><a class="reference internal" href="../_modules/sad/generator/base.html#GeneratorFactory.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.base.GeneratorFactory.register" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.generator.implicit_fb">
+<span id="sad-generator-implicit-fb-module"></span><h2>sad.generator.implicit_fb module<a class="headerlink" href="#module-sad.generator.implicit_fb" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ImplicitFeedbackGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.sad.SADModel" title="sad.model.sad.SADModel"><span class="pre">sad.model.sad.SADModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/implicit_fb.html#ImplicitFeedbackGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.generator.base.GeneratorBase</span></code></a></p>
+<p>A concrete generator class that handles user-item implicit feedbacks. After an
+instance of this class is created, <code class="docutils literal notranslate"><span class="pre">self.add(filepath)</span></code> will need to be called to
+add a local file to this generator. The format of the local file is a compressed
+tarball, containing a <code class="docutils literal notranslate"><span class="pre">raw.json</span></code> file, and an optionally <code class="docutils literal notranslate"><span class="pre">raw_with_rating.json</span></code>
+file.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">raw.json</span></code> file is a dictionary mapping a user (in <code class="docutils literal notranslate"><span class="pre">user_id</span></code>) to a list of
+items (in <code class="docutils literal notranslate"><span class="pre">item_id</span></code>) that the user has interacted with.</p>
+<p>The optional <code class="docutils literal notranslate"><span class="pre">raw_with_rating.json</span></code> file is a nested dictionary. It is a mapping
+between a user (in <code class="docutils literal notranslate"><span class="pre">user_id</span></code>) and items that the user has rated. The value of the
+dictionary is another dict with mapping between items (in <code class="docutils literal notranslate"><span class="pre">item_id</span></code>) and their
+rating scores.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.cornac_dataset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cornac_dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">cornac.data.dataset.Dataset</span></em><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.cornac_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>A Cornac Dataset object containing user/item pairs and ratings associated with
+them. Will be used for fitting models from <code class="docutils literal notranslate"><span class="pre">cornac</span></code> package.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.data_df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.data_df" title="Permalink to this definition"></a></dt>
+<dd><p>A Pandas Dataframe containing user/item pairs and ratings associated with
+them. For <code class="docutils literal notranslate"><span class="pre">ImplicitFeedbackGenerator</span></code> the ratings are set to <code class="docutils literal notranslate"><span class="pre">1.0|0.0</span></code>. User
+and item IDs are under <code class="docutils literal notranslate"><span class="pre">userID</span></code> and <code class="docutils literal notranslate"><span class="pre">itemID</span></code> respectively.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.get_obs_uij">
+<span class="sig-name descname"><span class="pre">get_obs_uij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/sad/generator/implicit_fb.html#ImplicitFeedbackGenerator.get_obs_uij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.get_obs_uij" title="Permalink to this definition"></a></dt>
+<dd><p>Get the <code class="docutils literal notranslate"><span class="pre">(u,</span> <span class="pre">i,</span> <span class="pre">j)</span></code>-th observation from personalized three-way tensor
+<code class="docutils literal notranslate"><span class="pre">self.tensor</span></code>. When <code class="docutils literal notranslate"><span class="pre">self.tensor</span></code> is pre-calculated, its value will be
+returned. Otherwise, <code class="docutils literal notranslate"><span class="pre">self.uidx_to_iidxs_tuple</span></code> will be used to infer the
+observation at runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The user idx.</p></li>
+<li><p><strong>i_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Index of first item in comparison.</p></li>
+<li><p><strong>j_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Index of second item in comparison.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A value from <code class="docutils literal notranslate"><span class="pre">(-1,</span> <span class="pre">1,</span> <span class="pre">0)</span></code> indicating the personalized
+preference of the two items. <code class="docutils literal notranslate"><span class="pre">1</span></code> indicates <code class="docutils literal notranslate"><span class="pre">i_idx</span></code>-th item is preferable
+than <code class="docutils literal notranslate"><span class="pre">j_idx</span></code>-th; <code class="docutils literal notranslate"><span class="pre">-1</span></code> suggests otherwise; <code class="docutils literal notranslate"><span class="pre">0</span></code> indicate such information
+is not available.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.get_trn">
+<span class="sig-name descname"><span class="pre">get_trn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/sad/generator/implicit_fb.html#ImplicitFeedbackGenerator.get_trn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.get_trn" title="Permalink to this definition"></a></dt>
+<dd><p>Interface to generator samples for model training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An iterable that training samples will be iterated
+through in mini-batches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator[Any]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.get_val_or_not">
+<span class="sig-name descname"><span class="pre">get_val_or_not</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/sad/generator/implicit_fb.html#ImplicitFeedbackGenerator.get_val_or_not"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.get_val_or_not" title="Permalink to this definition"></a></dt>
+<dd><p>Interface to generator samples for validating model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An iterable that validation samples will be iterated
+through in mini-batches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator[Any]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.msft_ncf_dataset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">msft_ncf_dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">recommenders.models.ncf.dataset.Dataset</span></em><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.msft_ncf_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>A NCF (Neural Collaborative Filtering) Dataset object implemented in
+<code class="docutils literal notranslate"><span class="pre">recommenders</span></code> package from MSFT. It contains user/item pairs and ratings
+associated with them. Will be used for fitting a NCF model using
+<code class="docutils literal notranslate"><span class="pre">recommenders</span></code> package.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.prepare">
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/implicit_fb.html#ImplicitFeedbackGenerator.prepare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.prepare" title="Permalink to this definition"></a></dt>
+<dd><p>Instance method that will be called to inform a generator instance that all
+raw data have been added. For this class, the format of raw data is a compressed
+tarball, containing a <code class="docutils literal notranslate"><span class="pre">raw.json</span></code> file, and optionally, a
+<code class="docutils literal notranslate"><span class="pre">raw_with_rating.json</span></code> file, a <code class="docutils literal notranslate"><span class="pre">delete_raw.json</span></code>, and
+<cite>delete_raw_with_rating.json</cite>. The second two files contain hold-out user-item
+interactions (and their ratings). Upon being called, following steps will be
+performed.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Unzip raw data tarball. Read the <code class="docutils literal notranslate"><span class="pre">raw.json</span></code> and
+<code class="docutils literal notranslate"><span class="pre">raw_with_rating.json</span></code> file. When multiple such tarballs exist, their
+json files will be merged into one. When hold-out user-item interactions
+exist (<code class="docutils literal notranslate"><span class="pre">delete_raw.json</span></code>, and <code class="docutils literal notranslate"><span class="pre">delete_raw_with_rating.json</span></code>), those
+interactions will be read too. Interaction data will be read to
+<code class="docutils literal notranslate"><span class="pre">self.data_trn</span></code>, <code class="docutils literal notranslate"><span class="pre">self.data_val</span></code> and <code class="docutils literal notranslate"><span class="pre">self.data_all</span></code> fields. Data
+with ratings will be in <code class="docutils literal notranslate"><span class="pre">self.ratings_trn</span></code>, <code class="docutils literal notranslate"><span class="pre">self.ratings_val</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">self.ratings_all</span></code>.</p></li>
+<li><p>Create a <code class="docutils literal notranslate"><span class="pre">self.user_idx_to_id</span></code> and <code class="docutils literal notranslate"><span class="pre">self.user_id_to_idx</span></code> mapping. The
+same will be created for items.</p></li>
+<li><p>Create (optionally) <code class="docutils literal notranslate"><span class="pre">self.tensor</span></code> with size <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">m</span> <span class="pre">x</span> <span class="pre">m</span></code> containing
+personalized pairwise comparison between items. Its value takes <code class="docutils literal notranslate"><span class="pre">-1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">0</span></code>, meaning first item is less preferable, more preferable
+and preference not available respectively. This tensor is only created
+when <code class="docutils literal notranslate"><span class="pre">self.tensor_flag</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. Large values of <code class="docutils literal notranslate"><span class="pre">n</span></code> and
+<code class="docutils literal notranslate"><span class="pre">m</span></code> may result memory overflow.</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">self.uidx_to_iidxs_tuple</span></code>, a mapping between user idx to a
+tuple of two sets, with first one being interacted items and second one
+being non-interacted items, in <code class="docutils literal notranslate"><span class="pre">item_idx</span></code>.</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">self.user_idx_to_preference</span></code>, a mapping between user idx to
+another dictionary, with keys being a tuple of two items
+(in <code class="docutils literal notranslate"><span class="pre">item_id</span></code>) and values being <code class="docutils literal notranslate"><span class="pre">1</span></code>. The order of the two items in
+keys indicate their preference.</p></li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.implicit_fb.ImplicitFeedbackGenerator.surprise_dataset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surprise_dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">surprise.dataset.Dataset</span></em><a class="headerlink" href="#sad.generator.implicit_fb.ImplicitFeedbackGenerator.surprise_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>A Dataset object implemented in <code class="docutils literal notranslate"><span class="pre">surprise</span></code> package. It contains user/item
+pairs and ratings associated with them. Will be used for fitting a SVD model
+using <code class="docutils literal notranslate"><span class="pre">surprise</span></code> package.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.generator.simulation">
+<span id="sad-generator-simulation-module"></span><h2>sad.generator.simulation module<a class="headerlink" href="#module-sad.generator.simulation" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SimulationGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.model.html#sad.model.sad.SADModel" title="sad.model.sad.SADModel"><span class="pre">sad.model.sad.SADModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="sad.task.training.html#sad.task.training.training.TrainingTask" title="sad.task.training.training.TrainingTask"><span class="pre">TrainingTask</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/simulation.html#SimulationGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sad.generator.base.GeneratorBase" title="sad.generator.base.GeneratorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sad.generator.base.GeneratorBase</span></code></a></p>
+<p>A concrete generator class that handles simulated data from the generative model
+of <code class="docutils literal notranslate"><span class="pre">SAD</span></code>. After an instance of this class is created, <code class="docutils literal notranslate"><span class="pre">self.add(filepath)</span></code> will
+need to be called to add a local file to this generator. The format of the local
+file is a compressed tarball, containing a <code class="docutils literal notranslate"><span class="pre">raw.npz</span></code> file, inside which true model
+parameters <code class="docutils literal notranslate"><span class="pre">XI0</span></code>, <code class="docutils literal notranslate"><span class="pre">T0</span></code> <code class="docutils literal notranslate"><span class="pre">H0</span></code> and <code class="docutils literal notranslate"><span class="pre">X0</span></code> (derived from the first three matrices)
+are contained. An observation tensor <code class="docutils literal notranslate"><span class="pre">Obs0</span></code> is in the raw file as well, containing
+a fully observed personalized pairwise comparision taking values of <code class="docutils literal notranslate"><span class="pre">-1</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+<p>One can set <code class="docutils literal notranslate"><span class="pre">self.missing_ratio</span></code> to control the percentage of missing data in the
+observation. Details see below.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.H0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">H0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.H0" title="Permalink to this definition"></a></dt>
+<dd><p>The true left item matrix (<code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">x</span> <span class="pre">m</span></code>) containing item left vectors as columns.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.Obs0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Obs0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.Obs0" title="Permalink to this definition"></a></dt>
+<dd><p>Three way tensor containing observations. An alias to <code class="docutils literal notranslate"><span class="pre">self.tensor</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.T0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">T0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.T0" title="Permalink to this definition"></a></dt>
+<dd><p>The true right item matrix (<code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">x</span> <span class="pre">m</span></code>) containing item right vectors as columns.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.X0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">X0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.X0" title="Permalink to this definition"></a></dt>
+<dd><p>The three way tensor (<code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">m</span> <span class="pre">x</span> <span class="pre">m</span></code>) containing true preference scores.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.XI0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">XI0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.XI0" title="Permalink to this definition"></a></dt>
+<dd><p>The true user matrix (<code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">x</span> <span class="pre">n</span></code>) containing user vectors as columns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.get_obs_uij">
+<span class="sig-name descname"><span class="pre">get_obs_uij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/sad/generator/simulation.html#SimulationGenerator.get_obs_uij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.get_obs_uij" title="Permalink to this definition"></a></dt>
+<dd><p>Get the <code class="docutils literal notranslate"><span class="pre">(u,</span> <span class="pre">i,</span> <span class="pre">j)</span></code>-th observation from observation tensor <code class="docutils literal notranslate"><span class="pre">self.Obs0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The user idx.</p></li>
+<li><p><strong>i_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Index of first item in comparison.</p></li>
+<li><p><strong>j_idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Index of second item in comparison.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A value from <code class="docutils literal notranslate"><span class="pre">(-1,</span> <span class="pre">1,</span> <span class="pre">0)</span></code> indicating the personalized
+preference of the two items. <code class="docutils literal notranslate"><span class="pre">1</span></code> indicates <code class="docutils literal notranslate"><span class="pre">i_idx</span></code>-th item is preferable
+than <code class="docutils literal notranslate"><span class="pre">j_idx</span></code>-th; <code class="docutils literal notranslate"><span class="pre">-1</span></code> suggests otherwise; <code class="docutils literal notranslate"><span class="pre">0</span></code> indicate such information
+is not available.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.get_trn">
+<span class="sig-name descname"><span class="pre">get_trn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/sad/generator/simulation.html#SimulationGenerator.get_trn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.get_trn" title="Permalink to this definition"></a></dt>
+<dd><p>Interface to generator samples for model training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An iterable that training samples will be iterated
+through in mini-batches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator[Any]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.get_val_or_not">
+<span class="sig-name descname"><span class="pre">get_val_or_not</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/sad/generator/simulation.html#SimulationGenerator.get_val_or_not"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.get_val_or_not" title="Permalink to this definition"></a></dt>
+<dd><p>Interface to generator samples for validating model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An iterable that validation samples will be iterated
+through in mini-batches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterator[Any]</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.ll0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ll0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.ll0" title="Permalink to this definition"></a></dt>
+<dd><p>The log likelihood of non-missing observations under true parameter values.
+Its value will be set after running <code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.missing_ratio">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.missing_ratio" title="Permalink to this definition"></a></dt>
+<dd><p>Proportion of missing entries in <code class="docutils literal notranslate"><span class="pre">self.Obs0</span></code>. Default to <code class="docutils literal notranslate"><span class="pre">0</span></code> meaning no
+observation is missing. Will read directly from <code class="docutils literal notranslate"><span class="pre">&quot;missing_ratio&quot;</span></code> field in
+<code class="docutils literal notranslate"><span class="pre">self.spec</span></code>. Missing entries in <code class="docutils literal notranslate"><span class="pre">self.Obs0</span></code> will be set to <code class="docutils literal notranslate"><span class="pre">0</span></code> when
+<code class="docutils literal notranslate"><span class="pre">self.prepare()</span></code> is invoked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.prepare">
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/sad/generator/simulation.html#SimulationGenerator.prepare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.prepare" title="Permalink to this definition"></a></dt>
+<dd><p>Instance method that will be called to inform a generator that all raw data
+have been added. For this class, the format of raw data is a compressed tarball,
+containing a <code class="docutils literal notranslate"><span class="pre">raw.npz</span></code> file. Upon being called, following steps will be
+performed. For this class only one raw data file is allowed to be added to
+the generator.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Unzip raw data tarball. Read true parameter values from <code class="docutils literal notranslate"><span class="pre">raw.npz</span></code> file,
+set corresponding attributes of current generator.</p></li>
+<li><p>Create a <code class="docutils literal notranslate"><span class="pre">self.user_idx_to_id</span></code> and <code class="docutils literal notranslate"><span class="pre">self.user_id_to_idx</span></code> mapping. The
+same will be created for items.</p></li>
+<li><p>Randomly set certain proportion of observations to <code class="docutils literal notranslate"><span class="pre">0</span></code>, suggesting data
+are missing. In the meanwhile, calculate log likelihood of observed
+entries under true parameter values.</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">self.user_idx_to_preference</span></code>, a mapping between user idx to
+another dictionary, with keys being a tuple of two items
+(in <code class="docutils literal notranslate"><span class="pre">item_id</span></code>) and values being <code class="docutils literal notranslate"><span class="pre">1</span></code>. The order of the two items in
+keys indicate their preference.</p></li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sad.generator.simulation.SimulationGenerator.rnd_seed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rnd_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#sad.generator.simulation.SimulationGenerator.rnd_seed" title="Permalink to this definition"></a></dt>
+<dd><p>Random seed. Used for reproducibility purposes. Will read directly from
+<code class="docutils literal notranslate"><span class="pre">&quot;rnd_seed&quot;</span></code> field from <code class="docutils literal notranslate"><span class="pre">self.spec</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sad.generator">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sad.generator" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

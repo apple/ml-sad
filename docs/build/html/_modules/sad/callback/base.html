@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.callback.base &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>sad.callback.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.callback.base</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">.caller</span> <span class="kn">import</span> <span class="n">CallerProtocol</span>
+
+
+<div class="viewcode-block" id="CallbackBase"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase">[docs]</a><span class="k">class</span> <span class="nc">CallbackBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A callback base class that every concrete callback subclass will inherit from.</span>
+
+<span class="sd">    Instance of this class will be managed by a caller instance that is compliant with</span>
+<span class="sd">    ``CallerProtocol``. Currently instances of ``sad.trainer.TrainerBase`` classes could</span>
+<span class="sd">    be such callers. Callback instances will be created during caller&#39;s initialization.</span>
+<span class="sd">    Configurations for this callback is provided under</span>
+<span class="sd">    ``caller:spec:callbacks:``. An example is shown below::</span>
+
+<span class="sd">        trainer:</span>
+<span class="sd">          name: SGDTrainer</span>
+<span class="sd">          spec:</span>
+<span class="sd">            n_iters: 20</span>
+<span class="sd">            w_l1: 0.1</span>
+<span class="sd">            w_l2: 0.0</span>
+<span class="sd">            u_idxs: [0, 1, 2, 3]</span>
+<span class="sd">            callbacks:</span>
+<span class="sd">            - name: &quot;CheckpointingCallback&quot;</span>
+<span class="sd">              spec:</span>
+<span class="sd">                start: 10</span>
+<span class="sd">                every: 1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span> <span class="n">CallerProtocol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">caller</span> <span class="o">=</span> <span class="n">caller</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;callback.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Configuration dictionary that is used to initialize the instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+
+    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A reference to ``&quot;spec&quot;`` field in ``self.config``. When no such field exists</span>
+<span class="sd">        or the value is ``None``, an empty dictionary will be set.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">)</span>
+
+    <span class="nd">@spec</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">caller</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CallerProtocol</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reference to an instance of a caller class that is compliant with</span>
+<span class="sd">        ``CallerProtocol``. Could be an instance of ``sad.trainer.TrainerBase``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caller</span>
+
+    <span class="nd">@caller</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">caller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span> <span class="n">CallerProtocol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_caller</span> <span class="o">=</span> <span class="n">caller</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_caller</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CallbackBase.on_loop_begin"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase.on_loop_begin">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">on_loop_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called from caller when main loop begins. The main loop could be</span>
+<span class="sd">        training loop in ``sad.trainer.TrainerBase``.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CallbackBase.on_loop_end"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase.on_loop_end">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">on_loop_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called from caller when main loop ends.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CallbackBase.on_iter_begin"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase.on_iter_begin">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">on_iter_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called from caller when an iteration begins. An iteration could be</span>
+<span class="sd">        an epoch during training loop.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iter_idx (:obj:`int`): The index of iteration, 0-based.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CallbackBase.on_iter_end"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase.on_iter_end">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">on_iter_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called from caller when an iteration ends.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iter_idx (:obj:`int`): The index of iteration. 0-based.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CallbackBase.on_step_begin"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase.on_step_begin">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">on_step_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called from caller when a step begins. A step could be one gradient</span>
+<span class="sd">        updates from a minibatch during training.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iter_idx (:obj:`int`): The index of iteration. 0-based.</span>
+<span class="sd">            step_idx (:obj:`int`): The index of step. 0-based.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CallbackBase.on_step_end"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackBase.on_step_end">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be called from caller when a step finishes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            iter_idx (:obj:`int`): The index of iteration. 0-based.</span>
+<span class="sd">            step_idx (:obj:`int`): The index of step. 0-based.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="CallbackFactory"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackFactory">[docs]</a><span class="k">class</span> <span class="nc">CallbackFactory</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A factory class that is responsible to create callback instances.&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;callback.CallbackFactory&quot;</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;:class:`logging.Logger`: Class attribute for logging.&quot;&quot;&quot;</span>
+
+    <span class="n">_registry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;:class:`dict`: Registry dictionary containing a mapping between class name and</span>
+<span class="sd">    class object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CallbackFactory.register"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackFactory.register">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped_class</span><span class="p">:</span> <span class="n">CallbackBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CallbackBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A class level decorator responsible to decorate ``sad.callback.CallbackBase``</span>
+<span class="sd">        classes and register them into ``CallbackFactory._registry``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">wrapped_class</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Callback </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2"> already registered, Ignoring.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">wrapped_class</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapped_class</span>
+        <span class="k">return</span> <span class="n">wrapped_class</span></div>
+
+<div class="viewcode-block" id="CallbackFactory.produce"><a class="viewcode-back" href="../../../api/sad.callback.html#sad.callback.base.CallbackFactory.produce">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">produce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span> <span class="n">CallerProtocol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CallbackBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A class method to initialize instances of ``sad.callback.CallbackBase``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (:obj:`config`): Configuration used to initialize an instance object.</span>
+<span class="sd">                An example is given below::</span>
+
+<span class="sd">                    name: &quot;EarlyStoppingCallback&quot;</span>
+<span class="sd">                    spec:</span>
+<span class="sd">                        allow_incomplete_epoch: False</span>
+
+<span class="sd">            caller (:obj:`sad.callback.CallerProtocol`): An instance of a class that</span>
+<span class="sd">                is compliant with ``CallerProtocol``. Currently</span>
+<span class="sd">                ``sad.trainer.TrainerBase`` is of this class type. A callback</span>
+<span class="sd">                instance will be created with its caller. During caller&#39;s loop, callback</span>
+<span class="sd">                methods will be invoked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">callback_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">callback_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to produce </span><span class="si">{</span><span class="n">callback_name</span><span class="si">}</span><span class="s2"> callback.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">callback_name</span><span class="p">](</span><span class="n">config</span><span class="p">,</span> <span class="n">caller</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+sad package
+===========
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   sad.callback
+   sad.generator
+   sad.model
+   sad.task
+   sad.trainer
+   sad.utils
+
+Module contents
+---------------
+
+.. automodule:: sad
+   :members:
+   :undoc-members:
+   :show-inheritance:

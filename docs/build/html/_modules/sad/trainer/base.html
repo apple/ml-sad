@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sad.trainer.base &mdash; SAD 0.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SAD
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">SAD: Sliced Anti-symmetric Decomposition for Collaborative Filtering</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SAD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>sad.trainer.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sad.trainer.base</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># For licensing see accompanying LICENSE file.</span>
+<span class="c1"># Copyright (C) 2020 Apple Inc. All Rights Reserved.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">sad.callback</span> <span class="kn">import</span> <span class="n">CallerProtocol</span>
+<span class="kn">from</span> <span class="nn">sad.generator</span> <span class="kn">import</span> <span class="n">GeneratorBase</span>
+<span class="kn">from</span> <span class="nn">sad.model</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">sad.utils.misc</span> <span class="kn">import</span> <span class="n">update_dict_recursively</span>
+
+<span class="n">RAND_UPPER</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">RAND_LOWER</span> <span class="o">=</span> <span class="mi">100</span>
+
+
+<div class="viewcode-block" id="TrainerBase"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerBase">[docs]</a><span class="k">class</span> <span class="nc">TrainerBase</span><span class="p">(</span><span class="n">CallerProtocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The abstract trainer base class. It is the class that all concrete trainer classes</span>
+<span class="sd">    will inherit from.</span>
+
+<span class="sd">    In the meanwhile, this class is complaint of ``sad.callback.CallerProtocol``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">ModelBase</span><span class="p">,</span>
+        <span class="n">generator</span><span class="p">:</span> <span class="n">GeneratorBase</span><span class="p">,</span>
+        <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Base __init__ method.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_callback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trainer.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Configuration information that is used to initialize the instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+
+    <span class="nd">@config</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A reference to ``&quot;spec&quot;`` field in ``self.config``. When no such a field</span>
+<span class="sd">        available or the value is ``None``, an empty dictionary will be set.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spec&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">]</span>
+
+    <span class="nd">@spec</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A reference to a model instance. This model will be trained during training</span>
+<span class="sd">        loop by current trainer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
+
+    <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ModelBase</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A reference to a generator instance, which will be used by current trainer to</span>
+<span class="sd">        perform a training task.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span>
+
+    <span class="nd">@generator</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">:</span> <span class="n">GeneratorBase</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generator</span> <span class="o">=</span> <span class="n">generator</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A reference to an instance of training task associated with current trainer.</span>
+<span class="sd">        It is the task instance in which a trainer is initialized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span>
+
+    <span class="nd">@task</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">task</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:obj:`boolean`: A flag to indicate whether to stop training. Subject to</span>
+<span class="sd">        changes during training by callbacks.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
+
+    <span class="nd">@stop</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">=</span> <span class="n">stop</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:obj:`float`: Read directly from ``self.spec``. Learning rate. Subject to</span>
+<span class="sd">        changes during training by callbacks.&quot;&quot;&quot;</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lr&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lr</span>
+
+    <span class="nd">@lr</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_iters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of iterations that will happen in a trainer. Set to be an alias</span>
+<span class="sd">        to ``self.n_epochs``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_epochs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of epochs during training, specific to ``TrainerBase``. Will read</span>
+<span class="sd">        directly from ``&quot;n_epochs&quot;`` field in ``self.spec``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n_epochs&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">working_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:obj:`str`: Read directly from ``self.task.output_dir``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">output_dir</span>
+
+<div class="viewcode-block" id="TrainerBase.train"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerBase.train">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The main training loop. Concrete trainer classes are responsible to provide</span>
+<span class="sd">        implementations of their training logic.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">eval_at_every_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:obj:`int`: Read directly from ``self.spec``. A number to indicate how many</span>
+<span class="sd">        steps log likelihood will be evaluated. A negative number means do not evaluate</span>
+<span class="sd">        at step level.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_at_every_step&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TrainerBase.save"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerBase.save">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save an intance of trainer for later usage.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TrainerBase.load"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerBase.load">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load states of an trainer intance; mostly for continue the training loop of</span>
+<span class="sd">        a saved model.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TrainerBase.add_final_metrics_to_model_metrics"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerBase.add_final_metrics_to_model_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">add_final_metrics_to_model_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Class specific method to add final metrics to model&#39;s metrics attribute. After</span>
+<span class="sd">        addition, model&#39;s metrics will include ``&quot;final&quot;`` field with structure shown</span>
+<span class="sd">        below::</span>
+
+<span class="sd">            metrics = {</span>
+<span class="sd">                &quot;final&quot;: {</span>
+<span class="sd">                    &quot;ll&quot;: float,</span>
+<span class="sd">                    &quot;t_sparsity&quot;: float,</span>
+<span class="sd">                },</span>
+<span class="sd">            }</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ll</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ll&quot;</span><span class="p">)</span>
+        <span class="n">t_sparsity</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;t_sparsity&quot;</span><span class="p">)</span>
+        <span class="n">final_metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ll&quot;</span><span class="p">:</span> <span class="n">ll</span><span class="p">,</span>
+            <span class="s2">&quot;t_sparsity&quot;</span><span class="p">:</span> <span class="n">t_sparsity</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">update_dict_recursively</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="n">final_metrics</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="TrainerBase.on_loop_end"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerBase.on_loop_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loop_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be invoked at the end of training loop. Save trainer instance to</span>
+<span class="sd">        ``self.working_dir``, and save ``self.model``, ``self.generator`` in the</span>
+<span class="sd">        meanwhile.</span>
+
+<span class="sd">        This method overwrites ``on_loop_end`` in ``sad.callback.CallerProtocol``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
+            <span class="n">callback</span><span class="o">.</span><span class="n">on_loop_end</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_final_metrics_to_model_metrics</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TrainerFactory"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerFactory">[docs]</a><span class="k">class</span> <span class="nc">TrainerFactory</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A factory class that is responsible to create trainer instances.&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;trainer.TrainerFactory&quot;</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;:class:`logging.Logger`: Class attribute for logging.&quot;&quot;&quot;</span>
+
+    <span class="n">_registry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;:class:`dict`: Registry dictionary containing a mapping between class name to </span>
+<span class="sd">    class object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TrainerFactory.register"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerFactory.register">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wrapped_class</span><span class="p">:</span> <span class="n">TrainerBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainerBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A class level decorator responsible to decorate ``sad.trainer.TrainerBase``</span>
+<span class="sd">        classes and register them into ``TrainerFactory.registry``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">wrapped_class</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trainer </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2"> already registered, Ignoring.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">wrapped_class</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapped_class</span>
+        <span class="k">return</span> <span class="n">wrapped_class</span></div>
+
+<div class="viewcode-block" id="TrainerFactory.produce"><a class="viewcode-back" href="../../../api/sad.trainer.html#sad.trainer.base.TrainerFactory.produce">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">produce</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">ModelBase</span><span class="p">,</span>
+        <span class="n">generator</span><span class="p">:</span> <span class="n">GeneratorBase</span><span class="p">,</span>
+        <span class="n">task</span><span class="p">:</span> <span class="s2">&quot;TrainingTask&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainerBase</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A class level method to initialize instances of ``sad.trainer.TrainerBase``</span>
+<span class="sd">        classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config (:obj:`config`): Configuration used to initialize instance object. An</span>
+<span class="sd">                example is given below::</span>
+
+<span class="sd">                    name: &quot;SGDTrainer&quot;</span>
+<span class="sd">                    spec:</span>
+<span class="sd">                        w_l1: 0.01</span>
+<span class="sd">                        w_l2: 0.01:</span>
+<span class="sd">                        ...</span>
+
+<span class="sd">            model (:obj:`sad.model.ModelBase`): An instance of model, a trainable that a</span>
+<span class="sd">                trainer will train.</span>
+<span class="sd">            generator (:obj:`sad.generator.GeneratorBase`): An instance of generator,</span>
+<span class="sd">                from which training and validation data are generated.</span>
+<span class="sd">            task (:obj:`sad.tasks.training.TrainingTask`): An instance of training</span>
+<span class="sd">                task, from which a trainer is created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trainer_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trainer_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to produce </span><span class="si">{</span><span class="n">trainer_name</span><span class="si">}</span><span class="s2"> trainer.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">trainer_name</span><span class="p">](</span><span class="n">config</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">generator</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, AIML/Apple.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
