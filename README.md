@@ -11,14 +11,14 @@ for recommendations in this repo. From this perspective, this library can be vie
 an integration of SOTA recommendation models in a more or less principled manner such
 that benchmarking can be easily performed.
 
-Detailed API documentation can be found [here](https://github.com/apple/ml-sad).
+Detailed API documentation can be found [here](http://apple.github.io/ml-sad/).
 
 The list of SOTA models integrated into this library includes
 
 | Model Name              | Implementation                                                                | Reference |
 |-------------------------|-------------------------------------------------------------------------------|-----------|
-|     SAD                 |[ml-sad](https://github.com/apple/ml-sad)                                      |  [arXiv](http://arxiv.org/abs/2201.11936)                                 |
-|     BPR                 |[ml-sad](https://github.com/apple/ml-sad)                                      | [Rendle et al., 2009](https://dl.acm.org/doi/abs/10.5555/1795114.1795167) |
+|     SAD                 |[ml-sad](http://apple.github.io/ml-sad/)                                       |  [arXiv](http://arxiv.org/abs/2201.11936)                                 |
+|     BPR                 |[ml-sad](http://apple.github.io/ml-sad/)                                       | [Rendle et al., 2009](https://dl.acm.org/doi/abs/10.5555/1795114.1795167) |
 |     SVD                 |[Surprise](https://surprise.readthedocs.io/en/stable/matrix_factorization.html)| [Hug, 2020](https://joss.theoj.org/papers/10.21105/joss.02174)            |
 |Matrix Factorization (MF)|[Cornac](https://cornac.readthedocs.io/en/latest/index.html)                   | [Salah et al., 2020](https://www.jmlr.org/papers/v21/19-805.html)         |
 |Probabilistic MF (PMF)   |[Cornac](https://cornac.readthedocs.io/en/latest/index.html)                   | [Salah et al., 2020](https://www.jmlr.org/papers/v21/19-805.html)         |
@@ -59,4 +59,4 @@ The library hosted by this repo implements the SAD model and a SGD algorithm for
 inference. For the purpose of benchmark, we also add several SOTA recommendation models
 to the library. Those models are wrapped into classes where a set of unified API is
 provided. The source code of the library can be found under `./sad`. For detailed
-documentation, see [here](https://github.com/apple/ml-sad).
+documentation, see [here](http://apple.github.io/ml-sad/).
