@@ -75,13 +75,13 @@
 <p><img alt="icon" src="_images/logo_small.png" /></p>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline"></a></h2>
-<p>This repo implements a collaborative filtering model with a novel tensor decomposition
-approach named <strong>S</strong>liced <strong>A</strong>nti-symmetric <strong>D</strong>ecomposition (SAD). In addition to the
-implementation of the new model SAD, one can find several state of the art (SOTA) models
+<p>This repo implements a collaborative filtering model using a novel tensor decomposition
+method named <strong>S</strong>liced <strong>A</strong>nti-symmetric <strong>D</strong>ecomposition (SAD) for personalized
+recommendation. In addition, one can find several state of the art (SOTA) models
 for recommendations in this repo. From this perspective, this library can be viewed as
 an integration of SOTA recommendation models in a more or less principled manner such
 that benchmarking can be easily performed.</p>
-<p>Detailed API documentation can be found <a class="reference external" href="https://pages.github.pie.apple.com/aiml-oss/ml-sad/">here</a>.</p>
+<p>Detailed API documentation can be found <a class="reference external" href="http://apple.github.io/ml-sad/">here</a>.</p>
 <p>The list of SOTA models integrated into this library includes</p>
 <table class="colwidths-auto docutils align-default">
 <thead>
@@ -92,11 +92,11 @@ that benchmarking can be easily performed.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>SAD</p></td>
-<td><p><a class="reference external" href="https://github.pie.apple.com/aiml-oss/ml-sad">ml-sad</a></p></td>
+<td><p><a class="reference external" href="http://apple.github.io/ml-sad/">ml-sad</a></p></td>
 <td><p><a class="reference external" href="http://arxiv.org/abs/2201.11936">arXiv</a></p></td>
 </tr>
 <tr class="row-odd"><td><p>BPR</p></td>
-<td><p><a class="reference external" href="https://github.pie.apple.com/aiml-oss/ml-sad">ml-sad</a></p></td>
+<td><p><a class="reference external" href="http://apple.github.io/ml-sad/">ml-sad</a></p></td>
 <td><p><a class="reference external" href="https://dl.acm.org/doi/abs/10.5555/1795114.1795167">Rendle et al., 2009</a></p></td>
 </tr>
 <tr class="row-even"><td><p>SVD</p></td>
@@ -128,35 +128,35 @@ that benchmarking can be easily performed.</p>
 </section>
 <section id="about-sad-model">
 <h2>About SAD Model<a class="headerlink" href="#about-sad-model" title="Permalink to this headline"></a></h2>
-<p>SAD is a new model for collaborative filtering based on implicit feedback. In contrast
-to traditional techniques where a latent representation of users (user vectors) and
-items (item vectors) are estimated, SAD introduces one additional latent vector to each
-item, using a novel three-way tensor view of user-item interactions. This new vector
-extends user-item preferences calculated by standard dot products to general inner
-products, producing interactions between items when evaluating their relative
-preferences. SAD reduces to SOTA collaborative filtering models when the vector collapses
-to one. In SAD we allow its value to be estimated from data. The model of SAD is simple,
-resulting two efficient algorithms for parameter estimation. The
-first one uses simple group stochastic gradient descent (SGD) algorithm with only first
-order derivatives. In the second algorithm we develop an efficient Gibbs sampler for
-parameter estimation under Bayesian inference framework. The Gibbs sampler allows us to
-accurately characterize uncertainties of parameter estimates.</p>
+<p>SAD is a new model for collaborative filtering (CF) based on personal feedbacks. The
+feedbacks can be explicit, in which case explicit ratings exist. They can also be
+implicit, suggesting only user-item interactions are observed. For now we consider the
+most basic and common scenario in which only implicit feedbacks are available. In
+contrast to traditional recommendation models where a latent representation for each
+user (user vector) and item (item vector) are estimated, SAD introduces one additional
+latent vector to each item, using a novel three-way tensor view of user-item
+interactions. This new vector extends user-item preferences calculated by standard dot
+products to general inner products, producing interactions between items when evaluating
+their relative preferences. SAD reduces to SOTA collaborative filtering models when the
+new vector collapses to one. In SAD we allow its value to be estimated from data. The
+model of SAD is simple, resulting an efficient stochastic gradient descent (SGD)
+algorithm consuming only first order gradient for parameter estimation.</p>
 <p>Extensive simulation studies have demonstrated the power of SAD model and the
-effectiveness of inference algorithms we have developed. With the SGD algorithm, SAD is
-able to converge to accurate parameter estimates in a few dozens of SGD updates,
+effectiveness of the inference algorithm we have developed. With the SGD algorithm, SAD
+is able to converge to accurate parameter estimates in a few dozens of SGD updates,
 producing practical effeciency <em>on par</em>, if not better, than the Bayesian Personalized
 Ranking (BPR) model. In benchmarking with SOTA models on real datasets including Netflix
-Prize, Movie-Lens 1M and Amazon Fine-Food Review data, SAD is able to produce
-personalized item preferences mostly consistent with ground truth, beating <strong>all</strong> SOTA
-models considered above with a large margin.</p>
+Prize, Movie-Lens 1M and Recipe Review data, SAD is able to generate personalized item
+preferences mostly consistent with ground truth, at the same time produce more accurate
+personalized recommendations.</p>
 </section>
 <section id="about-this-package">
 <h2>About this Package<a class="headerlink" href="#about-this-package" title="Permalink to this headline"></a></h2>
-<p>The package hosted by this repo implements the SAD model, together with several SOTA
-recommendation/collaborative filtering models in the market. The source code of the
-package can be found under <code class="docutils literal notranslate"><span class="pre">./sad</span></code>. A website of this package can be found
-<a class="reference external" href="https://pages.github.pie.apple.com/aiml-oss/ml-sad/">here</a>, where detailed API
-documentations are included.</p>
+<p>The library hosted by this repo implements the SAD model and a SGD algorithm for
+inference. For the purpose of benchmark, we also add several SOTA recommendation models
+to the library. Those models are wrapped into classes where a set of unified API is
+provided. The source code of the library can be found under <code class="docutils literal notranslate"><span class="pre">./sad</span></code>. For detailed
+documentation, see <a class="reference external" href="http://apple.github.io/ml-sad/">here</a>.</p>
 </section>
 </section>
 
