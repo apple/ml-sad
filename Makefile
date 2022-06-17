@@ -10,7 +10,7 @@ help:
 	@echo "Makefile commands:"
 	@echo ""
 	@echo ""
-	@echo "make venv - create local Python virtual environment using `requirements-dev.txt` file"
+	@echo "make venv - create local Python virtual environment with required dependencies"
 	@echo ""
 	@echo ""
 
@@ -18,12 +18,11 @@ help:
 $(VENV)/bin/activate: requirements-dev.txt
 	python3.7 -m venv $(VENV)
 	./$(VENV)/bin/pip install --upgrade pip
-	./$(VENV)/bin/pip install -r requirements-dev.txt
 	./$(VENV)/bin/pip install rankfm
 	./$(VENV)/bin/pip install recommenders
 	./$(VENV)/bin/pip install surprise
-	./$(VENV)/bin/pip install h5py==2.10.0
 	./$(VENV)/bin/pip install cornac
+	./$(VENV)/bin/pip install tensorflow tf_slim
 
 # venv is a shortcut target
 venv: $(VENV)/bin/activate
