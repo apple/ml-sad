@@ -40,7 +40,7 @@ interactions. This new vector extends user-item preferences calculated by standa
 products to general inner products, producing interactions between items when evaluating
 their relative preferences. SAD reduces to SOTA collaborative filtering models when the
 new vector collapses to one. In SAD we allow its value to be estimated from data. The
-model of SAD is simple, resulting an efficient stochastic gradient descent (SGD) 
+model of SAD is simple, resulting in an efficient stochastic gradient descent (SGD) 
 algorithm consuming only first order gradient for parameter estimation. 
 
 Extensive simulation studies have demonstrated the power of SAD model and the
